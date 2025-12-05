@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type FC } from "react";
 
 interface User {
   id: number;
@@ -11,7 +11,7 @@ interface Props {
   initialCount?: number;
 }
 
-export const UserProfile: React.FC<Props> = ({ title, initialCount = 0 }) => {
+export const UserProfile: FC<Props> = ({ title, initialCount = 0 }) => {
   const [count, setCount] = useState<number>(initialCount);
   const [user, setUser] = useState<User | null>(null);
 
@@ -19,7 +19,7 @@ export const UserProfile: React.FC<Props> = ({ title, initialCount = 0 }) => {
     // Simulate API call
     const fetchUser = async () => {
       try {
-        const response = await fetch('/api/user/1');
+        const response = await fetch("/api/user/1");
         const data = await response.json();
         setUser(data);
       } catch (error) {
@@ -31,7 +31,7 @@ export const UserProfile: React.FC<Props> = ({ title, initialCount = 0 }) => {
   }, []);
 
   const handleIncrement = () => {
-    setCount(prev => prev + 1);
+    setCount((prev) => prev + 1);
   };
 
   return (
