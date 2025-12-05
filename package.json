@@ -9,12 +9,27 @@
   "categories": [
     "Themes"
   ],
+  "main": "./src/extension.js",
+  "activationEvents": [
+    "onCommand:neomono.enableNeonDreams",
+    "onCommand:neomono.disableNeonDreams"
+  ],
   "contributes": {
     "themes": [
       {
         "label": "Neomono",
         "uiTheme": "vs-dark",
         "path": "./themes/Neomono-color-theme.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "neomono.enableNeonDreams",
+        "title": "Neomono: Enable Neon Dreams"
+      },
+      {
+        "command": "neomono.disableNeonDreams",
+        "title": "Neomono: Disable Neon Dreams"
       }
     ]
   }

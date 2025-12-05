@@ -1,0 +1,35 @@
+/* Neomono Glow Effect */
+.mtk3 {
+  color: #bd93f9;
+  text-shadow: 0 0 2px #bd93f9, 0 0 10px #6231a7;
+}
+
+.mtk4 {
+  color: #8be9fd;
+  text-shadow: 0 0 2px #100f2e, 0 0 8px #8be9fd;
+}
+
+.mtk6 {
+  color: #ff79c6;
+  text-shadow: 0 0 2px #100f2e, 0 0 10px #ff79c6;
+}
+
+.mtk8 {
+  color: #50fa7b;
+  text-shadow: 0 0 2px #100f2e, 0 0 10px #25a243;
+}
+
+.mtk9 {
+  color: #ff5555;
+  text-shadow: 0 0 2px #100f2e, 0 0 10px #ff5555;
+}
+
+.mtk12 {
+  color: #bd93f9;
+  text-shadow: 0 0 2px #100f2e, 0 0 10px #bd93f9;
+}
+
+.mtk15 {
+  color: #f1fa8c;
+  text-shadow: 0 0 2px #100f2e, 0 0 10px #f1fa8c;
+}
