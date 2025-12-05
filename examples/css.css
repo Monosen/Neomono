@@ -1,0 +1,44 @@
+/* CSS Sample for Neomono Theme */
+
+:root {
+  --primary-color: #ff79c6;
+  --secondary-color: #bd93f9;
+}
+
+body {
+  background-color: #282a36;
+  color: #f8f8f2;
+  font-family: 'Fira Code', monospace;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#header {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: var(--secondary-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #ff79c6;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+}
