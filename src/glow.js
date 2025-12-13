@@ -1,71 +1,89 @@
 const vscode = require('vscode');
-const fs = require('fs');
 const path = require('path');
 
-// Get VS Code installation directory from the executable path
-const vscodeAppPath = path.dirname(process.execPath);
-const cssPath = path.join(vscodeAppPath, 'resources', 'app', 'out', 'vs', 'workbench', 'workbench.desktop.main.css');
+async function isCustomCssExtensionInstalled() {
+    const extension = vscode.extensions.getExtension('be5invis.vscode-custom-css');
+    return extension !== undefined;
+}
 
-function enableGlow() {
+async function enableGlow() {
     try {
         const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
-        const glowCss = fs.readFileSync(glowCssPath, 'utf-8');
+        const glowCssUri = vscode.Uri.file(glowCssPath).toString();
         
-        let cssContent = fs.readFileSync(cssPath, 'utf-8');
+        const config = vscode.workspace.getConfiguration();
+        const customCssImports = config.get('vscode_custom_css.imports') || [];
         
-        if (cssContent.includes('/* Neomono Glow Effect */')) {
-            vscode.window.showInformationMessage('Neon Dreams is already enabled!');
+        if (customCssImports.includes(glowCssUri)) {
+            vscode.window.showInformationMessage('¡Neon Dreams ya está habilitado!');
             return;
         }
-
-        // Append our custom CSS
-        fs.appendFileSync(cssPath, '\n' + glowCss);
         
-        vscode.window.showInformationMessage('Neon Dreams enabled! Please restart VS Code to see the changes.', 'Restart').then(selection => {
-            if (selection === 'Restart') {
-                vscode.commands.executeCommand('workbench.action.reloadWindow');
-            }
-        });
+        customCssImports.push(glowCssUri);
+        await config.update('vscode_custom_css.imports', customCssImports, vscode.ConfigurationTarget.Global);
+        
+        const extensionInstalled = await isCustomCssExtensionInstalled();
+        
+        if (!extensionInstalled) {
+            vscode.window.showInformationMessage(
+                '✨ ¡Neon Dreams configurado! Ahora necesitas instalar la extensión "Custom CSS and JS Loader" para aplicar los efectos.',
+                'Instalar Extensión'
+            ).then(selection => {
+                if (selection === 'Instalar Extensión') {
+                    vscode.commands.executeCommand('workbench.extensions.installExtension', 'be5invis.vscode-custom-css');
+                }
+            });
+        } else {
+            vscode.window.showInformationMessage(
+                '✨ ¡Neon Dreams habilitado! Ahora ejecuta el comando "Reload Custom CSS and JS" para aplicar los cambios.',
+                'Recargar CSS'
+            ).then(selection => {
+                if (selection === 'Recargar CSS') {
+                    vscode.commands.executeCommand('extension.reloadCustomCSS');
+                }
+            });
+        }
 
     } catch (error) {
-        vscode.window.showErrorMessage('Failed to enable Neon Dreams: ' + error.message);
-        if (error.code === 'EACCES') {
-            vscode.window.showErrorMessage('Permission denied. Please run VS Code as Administrator.');
-        }
+        vscode.window.showErrorMessage('Error al habilitar Neon Dreams: ' + error.message);
     }
 }
 
-function disableGlow() {
+async function disableGlow() {
     try {
-        let cssContent = fs.readFileSync(cssPath, 'utf-8');
+        const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
+        const glowCssUri = vscode.Uri.file(glowCssPath).toString();
         
-        if (!cssContent.includes('/* Neomono Glow Effect */')) {
-            vscode.window.showInformationMessage('Neon Dreams is not enabled.');
+        const config = vscode.workspace.getConfiguration();
+        let customCssImports = config.get('vscode_custom_css.imports') || [];
+        
+        if (!customCssImports.includes(glowCssUri)) {
+            vscode.window.showInformationMessage('Neon Dreams no está habilitado.');
             return;
         }
-
-        // Remove our custom CSS (this is a simple implementation, might need more robust parsing)
-        const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
-        const glowCss = fs.readFileSync(glowCssPath, 'utf-8');
         
-        // We can't easily just replace the string because of potential whitespace diffs or if we appended it.
-        // A safer way for this simple append approach is to read the file and truncate it if we know we appended to the end,
-        // OR simpler: replace the exact string we appended.
-        
-        const newCssContent = cssContent.replace('\n' + glowCss, '');
-        fs.writeFileSync(cssPath, newCssContent);
+        customCssImports = customCssImports.filter(item => item !== glowCssUri);
+        await config.update('vscode_custom_css.imports', customCssImports, vscode.ConfigurationTarget.Global);
 
-        vscode.window.showInformationMessage('Neon Dreams disabled! Please restart VS Code.', 'Restart').then(selection => {
-            if (selection === 'Restart') {
-                vscode.commands.executeCommand('workbench.action.reloadWindow');
-            }
-        });
+        const extensionInstalled = await isCustomCssExtensionInstalled();
+        
+        if (!extensionInstalled) {
+            vscode.window.showWarningMessage(
+                '🌙 Neon Dreams deshabilitado en la configuración. Nota: La extensión "Custom CSS and JS Loader" no está instalada.'
+            );
+        } else {
+            vscode.window.showInformationMessage(
+                '🌙 Neon Dreams deshabilitado. Ejecuta el comando "Reload Custom CSS and JS" para aplicar los cambios.',
+                'Recargar CSS'
+            ).then(selection => {
+                if (selection === 'Recargar CSS') {
+                    vscode.commands.executeCommand('extension.reloadCustomCSS');
+                }
+            });
+        }
 
     } catch (error) {
-        vscode.window.showErrorMessage('Failed to disable Neon Dreams: ' + error.message);
-        if (error.code === 'EACCES') {
-            vscode.window.showErrorMessage('Permission denied. Please run VS Code as Administrator.');
-        }
+        vscode.window.showErrorMessage('Error al deshabilitar Neon Dreams: ' + error.message);
     }
 }
 
