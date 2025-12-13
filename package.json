@@ -2,7 +2,7 @@
   "name": "neomono",
   "displayName": "Neomono",
   "description": "A vibrant, futuristic dark theme with neon accents for modern developers.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.106.1"
   },
@@ -10,10 +10,6 @@
     "Themes"
   ],
   "main": "./src/extension.js",
-  "activationEvents": [
-    "onCommand:neomono.enableNeonDreams",
-    "onCommand:neomono.disableNeonDreams"
-  ],
   "contributes": {
     "themes": [
       {
