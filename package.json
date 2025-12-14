@@ -9,6 +9,10 @@
     "color": "#bd93f9",
     "theme": "dark"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Monosen/Neomono.git"
+  },
   "engines": {
     "vscode": "^1.106.1"
   },
