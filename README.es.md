@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/neomono-icon.png" width="150" alt="Neomono Icon" />
+  <img src="assets/neomono-icon.jpg" width="150" alt="Neomono Icon" />
   <h1>Neomono</h1>
   <p>
     <b>Un tema oscuro vibrante y futurista con acentos neón para desarrolladores modernos.</b>
