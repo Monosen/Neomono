@@ -3,6 +3,12 @@
   "displayName": "Neomono",
   "description": "A vibrant, futuristic dark theme with neon accents for modern developers.",
   "version": "0.0.2",
+  "publisher": "Monosen",
+  "icon": "assets/neomono-icon.png",
+  "galleryBanner": {
+    "color": "#bd93f9",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.106.1"
   },
