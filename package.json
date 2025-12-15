@@ -14,7 +14,7 @@
     "url": "https://github.com/Monosen/Neomono.git"
   },
   "engines": {
-    "vscode": "^1.106.1"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Themes"
