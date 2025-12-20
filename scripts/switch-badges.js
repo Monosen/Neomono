@@ -32,8 +32,8 @@ const badges = {
     <a href="https://open-vsx.org/extension/Monosen/neomono">
       <img src="https://img.shields.io/open-vsx/dt/Monosen/neomono?style=for-the-badge&color=89DDFF&logo=open-vsx" alt="Downloads" />
     </a>
-    <a href="https://open-vsx.org/extension/Monosen/neomono">
-      <img src="https://img.shields.io/open-vsx/r/Monosen/neomono?style=for-the-badge&color=C3E88D&logo=open-vsx" alt="Rating" />
+    <a href="https://github.com/Monosen/Neomono">
+      <img src="https://img.shields.io/github/stars/Monosen/Neomono?style=for-the-badge&color=C3E88D&logo=github" alt="Stars" />
     </a>
     <a href="https://github.com/Monosen/Neomono/blob/master/LICENSE">
       <img src="https://img.shields.io/github/license/Monosen/Neomono?style=for-the-badge&color=f07178&logo=github" alt="License" />
