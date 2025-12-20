@@ -5,18 +5,22 @@
     <b>Un tema oscuro vibrante y futurista con acentos neón para desarrolladores modernos.</b>
   </p>
 
-  <!-- Badges -->
+  <!-- BADGES_START -->
   <p>
     <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
-      <img src="https://img.shields.io/visual-studio-marketplace/v/Monosen.neomono?style=flat-square&color=C792EA" alt="Version" />
+      <img src="https://img.shields.io/visual-studio-marketplace/v/Monosen.neomono?style=for-the-badge&color=C792EA&logo=visual-studio-code" alt="Version" />
     </a>
     <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
-      <img src="https://img.shields.io/visual-studio-marketplace/i/Monosen.neomono?style=flat-square&color=89DDFF" alt="Installs" />
+      <img src="https://img.shields.io/visual-studio-marketplace/d/Monosen.neomono?style=for-the-badge&color=89DDFF&logo=visual-studio-code" alt="Downloads" />
+    </a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
+      <img src="https://img.shields.io/visual-studio-marketplace/r/Monosen.neomono?style=for-the-badge&color=C3E88D&logo=visual-studio-code" alt="Rating" />
     </a>
     <a href="https://github.com/Monosen/Neomono/blob/master/LICENSE">
-      <img src="https://img.shields.io/github/license/Monosen/Neomono?style=flat-square&color=f07178" alt="License" />
+      <img src="https://img.shields.io/github/license/Monosen/Neomono?style=for-the-badge&color=f07178&logo=github" alt="License" />
     </a>
   </p>
+  <!-- BADGES_END -->
 
   <p>
     <a href="README.md">English</a> • <a href="README.es.md">Español</a>
@@ -25,100 +29,30 @@
 
 ---
 
-## 🎨 Características
+## 📦 Instalación y Uso
 
-**Neomono** trae una estética cyberpunk a tu VS Code. Diseñado para largas sesiones de codificación con alto contraste y colores neón vibrantes que resaltan sobre un fondo oscuro profundo.
+1.  Instala **Neomono** desde el Marketplace de VS Code.
+2.  Selecciona el tema: `Ctrl+K` `Ctrl+T` > **Neomono**.
 
-- **Fondo**: Azul-Gris Profundo (`#263238`)
-- **Palabras clave**: Púrpura Neón (`#C792EA`)
-- **Funciones**: Azul Eléctrico (`#82AAFF`)
-- **Cadenas**: Verde Neón Suave (`#C3E88D`)
-- **Variables**: Cyan Brillante (`#EEFFFF`)
+## ✨ Efecto Neon Dreams
 
-## 💻 Lenguajes Soportados
+Habilita el efecto de brillo para una experiencia cyberpunk completa.
 
-Neomono está optimizado para una amplia variedad de lenguajes de programación:
+1.  Instala **[Custom CSS and JS Loader](https://marketplace.visualstudio.com/items?itemName=be5invis.vscode-custom-css)**.
+2.  Ejecuta el comando: `Neomono: Enable Neon Dreams`.
+3.  Ejecuta el comando: `Reload Custom CSS and JS`.
+4.  Reinicia VS Code.
 
-- **Web**: JavaScript, TypeScript, HTML, CSS, React (JSX/TSX)
-- **Backend**: Python, Go, Rust, Java, C#, PHP, Ruby
-- **Scripting**: Bash/Shell, SQL
-- **Datos**: JSON, YAML, Markdown
-
-Revisa la carpeta `examples/` en el repositorio para ver ejemplos de código en cada lenguaje.
-
-## 📦 Instalación
-
-1. Abre **Visual Studio Code**.
-2. Ve a la vista de **Extensiones** (`Ctrl+Shift+X` o `Cmd+Shift+X`).
-3. Busca `Neomono`.
-4. Haz clic en **Instalar**.
-5. Haz clic en **Establecer Tema de Color** y selecciona **Neomono**.
-
-## 🚀 Uso
-
-Una vez instalado, puedes cambiar al tema en cualquier momento:
-
-1. Presiona `Ctrl+K` y luego `Ctrl+T` (o `Cmd+K` `Cmd+T` en macOS).
-2. Selecciona **Neomono** de la lista.
-
-## ✨ Efecto Neon Dreams (Opcional)
-
-Para una experiencia aún más inmersiva, puedes habilitar el efecto **Neon Dreams** que añade brillo y efectos visuales adicionales:
-
-### Requisitos
-
-1. Instala la extensión [Custom CSS and JS Loader](https://marketplace.visualstudio.com/items?itemName=be5invis.vscode-custom-css):
-   ```
-   ext install be5invis.vscode-custom-css
-   ```
-
-### Activación
-
-1. Abre la paleta de comandos (`Ctrl+Shift+P` o `Cmd+Shift+P`).
-2. Ejecuta el comando: **Neomono: Enable Neon Dreams**.
-3. Si es la primera vez, se te pedirá que instales la extensión "Custom CSS and JS Loader".
-4. Una vez instalada, ejecuta el comando: **Reload Custom CSS and JS** desde la paleta de comandos.
-5. Reinicia VS Code cuando se te solicite.
-
-### Desactivación
-
-1. Abre la paleta de comandos.
-2. Ejecuta el comando: **Neomono: Disable Neon Dreams**.
-3. Ejecuta: **Reload Custom CSS and JS**.
-4. Reinicia VS Code.
-
-### ⚠️ Advertencia "[Unsupported]"
-
-Después de activar Neon Dreams, es **normal** que veas el mensaje `[Unsupported]` en la barra de título de VS Code. Esto sucede porque la extensión Custom CSS and JS Loader modifica archivos de VS Code para inyectar los efectos visuales personalizados.
-
-**¿Es esto un problema?**
-- ❌ No, tu VS Code funciona perfectamente
-- ✅ Es una advertencia estándar que aparece con todas las extensiones que modifican estilos
-- ✅ Extensiones populares como Synthwave '84 y Power Mode generan el mismo mensaje
-
-**Para ocultar la advertencia (opcional):**
-
-Agrega esto a tu `settings.json`:
-
-```json
-"window.titleBarStyle": "custom"
-```
-
-O simplemente ignora el mensaje - es completamente seguro.
-
-> **Nota**: Este método no requiere permisos de administrador y es compatible con actualizaciones de VS Code.
-
-## 🤝 Contribuir
-
-¡Issues y Pull Requests son bienvenidos! Visita el [Repositorio de GitHub](https://github.com/Monosen/Neomono).
+> [!NOTE]
+> Puedes ver una advertencia `[Unsupported]` en VS Code. Esto es normal y seguro.
+> Para ocultarla, agrega `"window.titleBarStyle": "custom"` a tu configuración.
 
 ## 📄 Licencia
 
-Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
+Licencia MIT - ver [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
   Hecho con ❤️ por <a href="https://github.com/Monosen">Monosen</a>
 </div>
-

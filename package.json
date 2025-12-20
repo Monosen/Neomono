@@ -38,5 +38,9 @@
         "title": "Neomono: Disable Neon Dreams"
       }
     ]
+  },
+  "scripts": {
+    "badges:vscode": "node scripts/switch-badges.js vscode",
+    "badges:ovsx": "node scripts/switch-badges.js ovsx"
   }
 }
