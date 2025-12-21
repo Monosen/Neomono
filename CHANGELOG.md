@@ -4,6 +4,35 @@ All notable changes to the "neomono" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.0.6] - 2025-12-20
+
+### Added
+- 70 new color properties for comprehensive VS Code UI coverage (expanded from 88 to 158 total properties)
+- Editor selection and highlighting colors
+- Find and search match highlighting with orange accents
+- Line highlight and indent guide colors
+- Cursor colors (bright white for visibility)
+- Bracket matching colors with cyan borders
+- Error squiggles (red), warning squiggles (orange), info squiggles (cyan), and hint squiggles (green)
+- Editor widget colors (autocomplete, hover, parameter hints)
+- Git gutter decorations (modified/orange, added/green, deleted/red)
+- Git file decorations (modified, deleted, untracked, ignored, conflicting)
+- Overview ruler indicators for Git changes and errors/warnings
+- Debug toolbar with pink background
+- Debug console message colors (info/cyan, warning/orange, error/red)
+- Notification center and toast styling
+- Badge colors (pink background)
+- Progress bar color (purple)
+- Scrollbar styling with subtle transparency
+
+### Changed
+- Updated indent guide properties from deprecated versions to current standard
+- Improved theme completeness from basic (88 properties) to production-ready (158 properties)
+
+### Fixed
+- Replaced deprecated `editorIndentGuide.background` with `editorIndentGuide.background1`
+- Replaced deprecated `editorIndentGuide.activeBackground` with `editorIndentGuide.activeBackground1`
+
 ## [0.0.5] - 2025-12-20
 
 ### Added
