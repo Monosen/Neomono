@@ -6,12 +6,12 @@
     "editor.foreground": "#f8f8f2",
     "activityBarBadge.background": "#ff79c6",
     "sideBarTitle.foreground": "#f8f8f2",
-	"sideBar.background": "#282a36",
-	"sideBar.foreground": "#f8f8f2",
-	"sideBarSectionHeader.background": "#1e1f29",
-	"sideBarSectionHeader.foreground": "#bd93f9",
-	"sideBarSectionHeader.border": "#1e1f29",
-	"activityBar.background": "#282a36",
+    "sideBar.background": "#282a36",
+    "sideBar.foreground": "#f8f8f2",
+    "sideBarSectionHeader.background": "#1e1f29",
+    "sideBarSectionHeader.foreground": "#bd93f9",
+    "sideBarSectionHeader.border": "#1e1f29",
+    "activityBar.background": "#282a36",
     "activityBar.foreground": "#bd93f9",
     "activityBar.inactiveForeground": "#6272a4",
     "titleBar.activeBackground": "#1e1f29",
@@ -135,7 +135,7 @@
     "gitDecoration.untrackedResourceForeground": "#8be9fd",
     "gitDecoration.ignoredResourceForeground": "#6272a4",
     "gitDecoration.conflictingResourceForeground": "#ff79c6",
-    "debugToolBar.background": "#ff79c6",
+    "debugToolBar.background": "#44475a",
     "debugToolBar.border": "#ff79c600",
     "debugConsole.infoForeground": "#8be9fd",
     "debugConsole.warningForeground": "#ffb86c",
@@ -721,6 +721,17 @@
     {
       "name": "Markup - Table",
       "scope": ["markup.table"],
+      "settings": {
+        "foreground": "#f8f8f2"
+      }
+    },
+    {
+      "name": "JSX Text",
+      "scope": [
+        "meta.jsx.children",
+        "meta.tag.attributes.tsx",
+        "meta.tag.attributes.jsx"
+      ],
       "settings": {
         "foreground": "#f8f8f2"
       }
