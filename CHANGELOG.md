@@ -4,6 +4,15 @@ All notable changes to the "neomono" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [0.0.8] - 2026-02-23
+
+### Fixed
+
+- Improved panel/chat separators visibility in Antigravity by adding missing border color tokens
+- Added explicit borders for sidebar and editor split views (`sideBar.border`, `editorGroup.border`, `editorGroupHeader.border`, `sideBySideEditor.horizontalBorder`, `sideBySideEditor.verticalBorder`)
+- Added chat-related border/background tokens for clearer request container separation (`chat.requestBorder`, `chat.requestBackground`)
+- Added `contrastBorder` for better UI divider consistency across workbench surfaces
+
 ## [0.0.7] - 2025-12-25
 
 ### Added
