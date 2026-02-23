@@ -8,6 +8,7 @@
     "sideBarTitle.foreground": "#f8f8f2",
     "sideBar.background": "#282a36",
     "sideBar.foreground": "#f8f8f2",
+    "sideBar.border": "#44475a",
     "sideBarSectionHeader.background": "#1e1f29",
     "sideBarSectionHeader.foreground": "#bd93f9",
     "sideBarSectionHeader.border": "#1e1f29",
@@ -69,6 +70,10 @@
     "statusBarItem.prominentHoverBackground": "#ff92d0",
     "panel.background": "#282a36",
     "panel.border": "#44475a",
+    "editorGroup.border": "#44475a",
+    "editorGroupHeader.border": "#44475a",
+    "sideBySideEditor.horizontalBorder": "#44475a",
+    "sideBySideEditor.verticalBorder": "#44475a",
     "panelTitle.activeBorder": "#bd93f9",
     "panelTitle.activeForeground": "#f8f8f2",
     "panelTitle.inactiveForeground": "#6272a4",
@@ -155,7 +160,10 @@
     "scrollbar.shadow": "#00000060",
     "scrollbarSlider.background": "#44475a60",
     "scrollbarSlider.hoverBackground": "#44475a80",
-    "scrollbarSlider.activeBackground": "#44475aA0"
+    "scrollbarSlider.activeBackground": "#44475aA0",
+    "contrastBorder": "#44475a",
+    "chat.requestBorder": "#44475a",
+    "chat.requestBackground": "#282a36"
   },
   "semanticHighlighting": true,
   "semanticTokenColors": {
