@@ -1,0 +1,8 @@
+{
+  "extension.description": "Un tema oscuro vibrante y futurista con acentos neón para desarrolladores modernos.",
+  "command.enableNeonDreams.title": "Habilitar Neon Dreams",
+  "command.disableNeonDreams.title": "Deshabilitar Neon Dreams",
+  "command.toggleNeonDreams.title": "Alternar Neon Dreams",
+  "config.autoReload.description": "Dispara automáticamente la recarga de Custom CSS al habilitar o deshabilitar Neon Dreams.",
+  "config.showNotifications.description": "Muestra notificaciones informativas cuando Neon Dreams cambia de estado."
+}

@@ -1,0 +1,8 @@
+{
+  "extension.description": "A vibrant, futuristic dark theme with neon accents for modern developers.",
+  "command.enableNeonDreams.title": "Enable Neon Dreams",
+  "command.disableNeonDreams.title": "Disable Neon Dreams",
+  "command.toggleNeonDreams.title": "Toggle Neon Dreams",
+  "config.autoReload.description": "Automatically trigger the Custom CSS reload after enabling or disabling Neon Dreams.",
+  "config.showNotifications.description": "Show informational notifications when Neon Dreams changes state."
+}

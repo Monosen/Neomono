@@ -1,0 +1,12 @@
+{
+  "neonDreams.alreadyEnabled": "Neon Dreams is already enabled.",
+  "neonDreams.notEnabled": "Neon Dreams is not enabled.",
+  "neonDreams.enabledNeedsExtension": "✨ Neon Dreams configured! Install the \"Custom CSS and JS Loader\" extension to apply the effect.",
+  "neonDreams.enabledNeedsReload": "✨ Neon Dreams enabled! Run \"Reload Custom CSS and JS\" to apply the changes.",
+  "neonDreams.disabledNoExtension": "🌙 Neon Dreams disabled in settings. Note: the \"Custom CSS and JS Loader\" extension is not installed.",
+  "neonDreams.disabledNeedsReload": "🌙 Neon Dreams disabled. Run \"Reload Custom CSS and JS\" to apply the changes.",
+  "neonDreams.enableError": "Error enabling Neon Dreams: {0}",
+  "neonDreams.disableError": "Error disabling Neon Dreams: {0}",
+  "neonDreams.action.installExtension": "Install Extension",
+  "neonDreams.action.reloadCss": "Reload CSS"
+}

@@ -5,16 +5,11 @@ const glow = require('./glow');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	let enableGlow = vscode.commands.registerCommand('neomono.enableNeonDreams', function () {
-		glow.enableGlow();
-	});
+	const enableGlow = vscode.commands.registerCommand('neomono.enableNeonDreams', () => glow.enableGlow());
+	const disableGlow = vscode.commands.registerCommand('neomono.disableNeonDreams', () => glow.disableGlow());
+	const toggleGlow = vscode.commands.registerCommand('neomono.toggleNeonDreams', () => glow.toggleGlow());
 
-	let disableGlow = vscode.commands.registerCommand('neomono.disableNeonDreams', function () {
-		glow.disableGlow();
-	});
-
-	context.subscriptions.push(enableGlow);
-	context.subscriptions.push(disableGlow);
+	context.subscriptions.push(enableGlow, disableGlow, toggleGlow);
 }
 
 function deactivate() {}
@@ -22,4 +17,4 @@ function deactivate() {}
 module.exports = {
 	activate,
 	deactivate
-}
+};

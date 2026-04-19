@@ -1,93 +1,161 @@
 const vscode = require('vscode');
 const path = require('path');
 
-async function isCustomCssExtensionInstalled() {
-    const extension = vscode.extensions.getExtension('be5invis.vscode-custom-css');
-    return extension !== undefined;
+const CUSTOM_CSS_EXTENSION_ID = 'be5invis.vscode-custom-css';
+const CUSTOM_CSS_IMPORTS_KEY = 'vscode_custom_css.imports';
+const RELOAD_CUSTOM_CSS_COMMAND = 'extension.reloadCustomCSS';
+
+function getGlowCssUri() {
+    const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
+    return vscode.Uri.file(glowCssPath).toString();
+}
+
+function isCustomCssExtensionInstalled() {
+    return vscode.extensions.getExtension(CUSTOM_CSS_EXTENSION_ID) !== undefined;
+}
+
+function getNeomonoConfig() {
+    const config = vscode.workspace.getConfiguration('neomono.neonDreams');
+    return {
+        autoReload: config.get('autoReload', true),
+        showNotifications: config.get('showNotifications', true)
+    };
+}
+
+function isGlowEnabled() {
+    const imports = vscode.workspace.getConfiguration().get(CUSTOM_CSS_IMPORTS_KEY) || [];
+    return imports.includes(getGlowCssUri());
+}
+
+async function updateImports(mutator) {
+    const config = vscode.workspace.getConfiguration();
+    const current = config.get(CUSTOM_CSS_IMPORTS_KEY) || [];
+    const next = mutator([...current]);
+    await config.update(CUSTOM_CSS_IMPORTS_KEY, next, vscode.ConfigurationTarget.Global);
+}
+
+async function reloadCustomCss() {
+    try {
+        await vscode.commands.executeCommand(RELOAD_CUSTOM_CSS_COMMAND);
+    } catch {
+        // The command is only available when the Custom CSS extension is installed.
+    }
+}
+
+function showInfo(message, ...actions) {
+    const { showNotifications } = getNeomonoConfig();
+    if (!showNotifications) {
+        return Promise.resolve(undefined);
+    }
+    return vscode.window.showInformationMessage(message, ...actions);
+}
+
+function showWarning(message, ...actions) {
+    const { showNotifications } = getNeomonoConfig();
+    if (!showNotifications) {
+        return Promise.resolve(undefined);
+    }
+    return vscode.window.showWarningMessage(message, ...actions);
 }
 
 async function enableGlow() {
     try {
-        const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
-        const glowCssUri = vscode.Uri.file(glowCssPath).toString();
-        
-        const config = vscode.workspace.getConfiguration();
-        const customCssImports = config.get('vscode_custom_css.imports') || [];
-        
-        if (customCssImports.includes(glowCssUri)) {
-            vscode.window.showInformationMessage('¡Neon Dreams ya está habilitado!');
+        const glowCssUri = getGlowCssUri();
+
+        if (isGlowEnabled()) {
+            showInfo(vscode.l10n.t('neonDreams.alreadyEnabled'));
             return;
         }
-        
-        customCssImports.push(glowCssUri);
-        await config.update('vscode_custom_css.imports', customCssImports, vscode.ConfigurationTarget.Global);
-        
-        const extensionInstalled = await isCustomCssExtensionInstalled();
-        
-        if (!extensionInstalled) {
-            vscode.window.showInformationMessage(
-                '✨ ¡Neon Dreams configurado! Ahora necesitas instalar la extensión "Custom CSS and JS Loader" para aplicar los efectos.',
-                'Instalar Extensión'
-            ).then(selection => {
-                if (selection === 'Instalar Extensión') {
-                    vscode.commands.executeCommand('workbench.extensions.installExtension', 'be5invis.vscode-custom-css');
-                }
-            });
-        } else {
-            vscode.window.showInformationMessage(
-                '✨ ¡Neon Dreams habilitado! Ahora ejecuta el comando "Reload Custom CSS and JS" para aplicar los cambios.',
-                'Recargar CSS'
-            ).then(selection => {
-                if (selection === 'Recargar CSS') {
-                    vscode.commands.executeCommand('extension.reloadCustomCSS');
-                }
-            });
+
+        await updateImports((imports) => {
+            imports.push(glowCssUri);
+            return imports;
+        });
+
+        const installLabel = vscode.l10n.t('neonDreams.action.installExtension');
+        const reloadLabel = vscode.l10n.t('neonDreams.action.reloadCss');
+
+        if (!isCustomCssExtensionInstalled()) {
+            const selection = await showInfo(
+                vscode.l10n.t('neonDreams.enabledNeedsExtension'),
+                installLabel
+            );
+            if (selection === installLabel) {
+                await vscode.commands.executeCommand(
+                    'workbench.extensions.installExtension',
+                    CUSTOM_CSS_EXTENSION_ID
+                );
+            }
+            return;
         }
 
+        const { autoReload } = getNeomonoConfig();
+        if (autoReload) {
+            await reloadCustomCss();
+            return;
+        }
+
+        const selection = await showInfo(
+            vscode.l10n.t('neonDreams.enabledNeedsReload'),
+            reloadLabel
+        );
+        if (selection === reloadLabel) {
+            await reloadCustomCss();
+        }
     } catch (error) {
-        vscode.window.showErrorMessage('Error al habilitar Neon Dreams: ' + error.message);
+        vscode.window.showErrorMessage(
+            vscode.l10n.t('neonDreams.enableError', error instanceof Error ? error.message : String(error))
+        );
     }
 }
 
 async function disableGlow() {
     try {
-        const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
-        const glowCssUri = vscode.Uri.file(glowCssPath).toString();
-        
-        const config = vscode.workspace.getConfiguration();
-        let customCssImports = config.get('vscode_custom_css.imports') || [];
-        
-        if (!customCssImports.includes(glowCssUri)) {
-            vscode.window.showInformationMessage('Neon Dreams no está habilitado.');
+        const glowCssUri = getGlowCssUri();
+
+        if (!isGlowEnabled()) {
+            showInfo(vscode.l10n.t('neonDreams.notEnabled'));
             return;
         }
-        
-        customCssImports = customCssImports.filter(item => item !== glowCssUri);
-        await config.update('vscode_custom_css.imports', customCssImports, vscode.ConfigurationTarget.Global);
 
-        const extensionInstalled = await isCustomCssExtensionInstalled();
-        
-        if (!extensionInstalled) {
-            vscode.window.showWarningMessage(
-                '🌙 Neon Dreams deshabilitado en la configuración. Nota: La extensión "Custom CSS and JS Loader" no está instalada.'
-            );
-        } else {
-            vscode.window.showInformationMessage(
-                '🌙 Neon Dreams deshabilitado. Ejecuta el comando "Reload Custom CSS and JS" para aplicar los cambios.',
-                'Recargar CSS'
-            ).then(selection => {
-                if (selection === 'Recargar CSS') {
-                    vscode.commands.executeCommand('extension.reloadCustomCSS');
-                }
-            });
+        await updateImports((imports) => imports.filter((item) => item !== glowCssUri));
+
+        if (!isCustomCssExtensionInstalled()) {
+            showWarning(vscode.l10n.t('neonDreams.disabledNoExtension'));
+            return;
         }
 
+        const { autoReload } = getNeomonoConfig();
+        if (autoReload) {
+            await reloadCustomCss();
+            return;
+        }
+
+        const reloadLabel = vscode.l10n.t('neonDreams.action.reloadCss');
+        const selection = await showInfo(
+            vscode.l10n.t('neonDreams.disabledNeedsReload'),
+            reloadLabel
+        );
+        if (selection === reloadLabel) {
+            await reloadCustomCss();
+        }
     } catch (error) {
-        vscode.window.showErrorMessage('Error al deshabilitar Neon Dreams: ' + error.message);
+        vscode.window.showErrorMessage(
+            vscode.l10n.t('neonDreams.disableError', error instanceof Error ? error.message : String(error))
+        );
+    }
+}
+
+async function toggleGlow() {
+    if (isGlowEnabled()) {
+        await disableGlow();
+    } else {
+        await enableGlow();
     }
 }
 
 module.exports = {
     enableGlow,
-    disableGlow
+    disableGlow,
+    toggleGlow
 };
