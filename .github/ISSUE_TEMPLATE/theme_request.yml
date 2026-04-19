@@ -1,0 +1,24 @@
+name: 🎨 Theme tweak or color request
+description: Suggest an adjustment to a specific color or UI element.
+title: "[Theme]: "
+labels: ["enhancement", "theme"]
+body:
+  - type: textarea
+    id: area
+    attributes:
+      label: UI area or token
+      description: Which part of the UI or language scope should change?
+      placeholder: "activityBar.background / keyword.control.flow.js"
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+      description: Propose a color or behavior. Include a hex value if possible.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot (optional)
