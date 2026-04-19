@@ -4,6 +4,47 @@ All notable changes to the "neomono" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
+
+### Added
+
+- **Theme coverage expanded from 163 to 399 workbench colors** (~145% increase, bringing parity with Dracula/Dark+ Pro)
+- **Integrated terminal**: background, foreground, selection, cursor, 16 ANSI colors (normal + bright) mapped to the Neomono palette
+- **Editor line numbers**: `editorLineNumber.foreground`, `activeForeground`, `dimmedForeground`
+- **Bracket pair colorization**: 6 rainbow colors for `editorBracketHighlight` and `editorBracketPairGuide` (normal + active), plus unexpected bracket foreground
+- **Minimap**: background, slider, gutter (added/modified/deleted), match highlights
+- **Diff editor**: inserted/removed text and line backgrounds, unchanged regions, gutter and overview colors
+- **Merge conflicts**: current/incoming/common headers and content, overview ruler indicators
+- **Peek view**: border, editor match highlight, result list, title bar
+- **Breadcrumbs**: background, foreground, focus, active selection, picker
+- **Sticky scroll**: background, hover, border, shadow
+- **Inlay hints and ghost text** (type hints, Copilot/Cursor suggestions): foreground, type, parameter variants
+- **Inline chat (AI)**: background, border, shadow, input styles, diff colors for accepted/rejected changes
+- **Command Center** (title bar search): full styling including active and inactive states
+- **Testing**: icon states, message decorations, peek border, covered/uncovered gutter highlights
+- **Settings editor**: headers, inputs, dropdowns, checkboxes, focus row, modified indicator
+- **Extensions view**: button variants, remote badges, star/verified/preRelease/sponsor icons
+- **Debug icons** (full): breakpoints (5 variants), start/pause/stop/disconnect/restart/step/continue
+- **Debug token expressions**: name, value, string, boolean, number, error
+- **Debug view and stack frame**: state labels, value changed highlight, exception widget
+- **Chat** (extended): slash commands, avatars, edited file indicator
+- **Banners**: background, foreground, icon
+- **Dropdowns**: background, foreground, border, list background
+- **Editor CodeLens, LightBulb, fold, comment gutter**: foreground colors for better ergonomics
+- Internationalization (i18n) for command titles, settings descriptions, and runtime messages via `package.nls.json` and `vscode.l10n` bundles (English / Spanish)
+- New command `Neomono: Toggle Neon Dreams`
+- Settings `neomono.neonDreams.autoReload` and `neomono.neonDreams.showNotifications`
+- Script `npm run validate:theme` that checks JSON, duplicate keys, and hex colors
+- GitHub Actions workflows for CI (validate + package `.vsix`) and Release (publish to VS Code Marketplace and Open VSX on tag `v*`)
+- `CONTRIBUTING.md`, issue templates (bug, theme request) and pull request template
+- `license`, `homepage`, `bugs`, `keywords`, `activationEvents`, and `engines.node` fields in `package.json`
+
+### Changed
+
+- `neomono-glow.css` is now scoped to the Neomono theme to avoid leaking the glow into other themes
+- `.vscodeignore` now excludes `examples/`, `scripts/`, `.github/`, `README.es.md` and other dev-only files from the published `.vsix`
+- Notifications are now suppressed when `neomono.neonDreams.showNotifications` is `false`, and Custom CSS reload can happen automatically via `neomono.neonDreams.autoReload`
+
 ## [0.0.8] - 2026-02-23
 
 ### Fixed
