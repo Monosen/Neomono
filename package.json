@@ -1,9 +1,30 @@
 {
   "name": "neomono",
   "displayName": "Neomono",
-  "description": "A vibrant, futuristic dark theme with neon accents for modern developers.",
+  "description": "%extension.description%",
   "version": "0.0.8",
   "publisher": "Monosen",
+  "license": "MIT",
+  "author": {
+    "name": "Monosen",
+    "url": "https://github.com/Monosen"
+  },
+  "homepage": "https://github.com/Monosen/Neomono#readme",
+  "bugs": {
+    "url": "https://github.com/Monosen/Neomono/issues"
+  },
+  "keywords": [
+    "theme",
+    "dark",
+    "neon",
+    "cyberpunk",
+    "dracula",
+    "vibrant",
+    "color-theme",
+    "neomono",
+    "glow"
+  ],
+  "qna": "marketplace",
   "icon": "assets/neomono-icon.jpg",
   "galleryBanner": {
     "color": "#bd93f9",
@@ -14,12 +35,19 @@
     "url": "https://github.com/Monosen/Neomono.git"
   },
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.80.0",
+    "node": ">=18"
   },
   "categories": [
     "Themes"
   ],
   "main": "./src/extension.js",
+  "l10n": "./l10n",
+  "activationEvents": [
+    "onCommand:neomono.enableNeonDreams",
+    "onCommand:neomono.disableNeonDreams",
+    "onCommand:neomono.toggleNeonDreams"
+  ],
   "contributes": {
     "themes": [
       {
@@ -31,16 +59,50 @@
     "commands": [
       {
         "command": "neomono.enableNeonDreams",
-        "title": "Neomono: Enable Neon Dreams"
+        "title": "%command.enableNeonDreams.title%",
+        "category": "Neomono"
       },
       {
         "command": "neomono.disableNeonDreams",
-        "title": "Neomono: Disable Neon Dreams"
+        "title": "%command.disableNeonDreams.title%",
+        "category": "Neomono"
+      },
+      {
+        "command": "neomono.toggleNeonDreams",
+        "title": "%command.toggleNeonDreams.title%",
+        "category": "Neomono"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Neomono",
+      "properties": {
+        "neomono.neonDreams.autoReload": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.autoReload.description%"
+        },
+        "neomono.neonDreams.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.showNotifications.description%"
+        }
+      }
+    }
   },
   "scripts": {
+    "validate:theme": "node scripts/validate-theme.js",
+    "lint": "eslint src scripts",
     "badges:vscode": "node scripts/switch-badges.js vscode",
-    "badges:ovsx": "node scripts/switch-badges.js ovsx"
+    "badges:ovsx": "node scripts/switch-badges.js ovsx",
+    "vscode:prepublish": "npm run validate:theme",
+    "package": "vsce package",
+    "publish:vscode": "vsce publish",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@vscode/vsce": "^3.2.1",
+    "eslint": "^9.17.0",
+    "ovsx": "^0.10.1"
   }
 }

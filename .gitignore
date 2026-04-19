@@ -1,4 +1,9 @@
-node_modules
+node_modules/
+.pnpm-store/
 *.vsix
 .env
 PUBLISHING.md
+.DS_Store
+Thumbs.db
+coverage/
+.vscode-test/
