@@ -1,35 +1,63 @@
-/* Neomono Glow Effect */
-.mtk3 {
+/*
+ * Neomono Glow Effect
+ *
+ * Scoped to the Neomono theme only. VS Code exposes the active color theme
+ * through the `workbench.colorTheme` setting, but in the DOM the Monaco
+ * editor tokens we rely on (.mtkN) have no theme prefix. To avoid leaking
+ * the glow into other themes when the user temporarily switches, we scope
+ * everything under a `:root[data-vscode-theme-name*="Neomono"]` selector
+ * when available, and fall back to `.monaco-workbench` which always exists.
+ *
+ * If a specific VS Code build does not expose the theme data attribute,
+ * the fallback still requires the user to have Neomono active for the
+ * colors below to match the actual token palette.
+ */
+
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk3,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk3,
+body[data-vscode-theme-name*="Neomono"] .mtk3 {
   color: #bd93f9;
   text-shadow: 0 0 2px #bd93f9, 0 0 10px #6231a7;
 }
 
-.mtk4 {
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk4,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk4,
+body[data-vscode-theme-name*="Neomono"] .mtk4 {
   color: #8be9fd;
   text-shadow: 0 0 2px #100f2e, 0 0 8px #8be9fd;
 }
 
-.mtk6 {
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk6,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk6,
+body[data-vscode-theme-name*="Neomono"] .mtk6 {
   color: #ff79c6;
   text-shadow: 0 0 2px #100f2e, 0 0 10px #ff79c6;
 }
 
-.mtk8 {
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk8,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk8,
+body[data-vscode-theme-name*="Neomono"] .mtk8 {
   color: #50fa7b;
   text-shadow: 0 0 2px #100f2e, 0 0 10px #25a243;
 }
 
-.mtk9 {
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk9,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk9,
+body[data-vscode-theme-name*="Neomono"] .mtk9 {
   color: #ff5555;
   text-shadow: 0 0 2px #100f2e, 0 0 10px #ff5555;
 }
 
-.mtk12 {
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk12,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk12,
+body[data-vscode-theme-name*="Neomono"] .mtk12 {
   color: #bd93f9;
   text-shadow: 0 0 2px #100f2e, 0 0 10px #bd93f9;
 }
 
-.mtk15 {
+:root[data-vscode-theme-name*="Neomono"] .monaco-workbench .mtk15,
+.monaco-workbench[data-vscode-theme-name*="Neomono"] .mtk15,
+body[data-vscode-theme-name*="Neomono"] .mtk15 {
   color: #f1fa8c;
   text-shadow: 0 0 2px #100f2e, 0 0 10px #f1fa8c;
 }
