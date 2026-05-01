@@ -7,3 +7,4 @@ PUBLISHING.md
 Thumbs.db
 coverage/
 .vscode-test/
+.atl/
