@@ -8,3 +8,9 @@ Thumbs.db
 coverage/
 .vscode-test/
 .atl/
+
+# Compiled output
+out/
+
+# Package manager
+pnpm-workspace.yaml
