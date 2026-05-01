@@ -21,8 +21,17 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Run linter
+        run: npm run lint
+
       - name: Validate theme JSON and colors
         run: npm run validate:theme
+
+      - name: Validate commands registered
+        run: node scripts/validate-commands.js
+
+      - name: Validate i18n synchronization
+        run: node scripts/validate-i18n.js
 
       - name: Package extension
         run: npx --yes @vscode/vsce package --no-git-tag-version --no-update-package-json -o neomono.vsix

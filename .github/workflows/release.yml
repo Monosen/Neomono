@@ -5,28 +5,66 @@ on:
     tags:
       - 'v*'
 
+env:
+  NODE_VERSION: 20
+
 jobs:
-  release:
-    name: Publish to Marketplace and Open VSX
+  validate:
+    name: Validate before release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Validate theme
+      - name: Run linter
+        run: npm run lint
+
+      - name: Validate theme JSON and colors
         run: npm run validate:theme
+
+      - name: Verify tag matches package version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "❌ Tag version ($TAG) does not match package.json version ($VERSION)"
+            exit 1
+          fi
+          echo "✅ Tag version matches package.json: $VERSION"
 
       - name: Package extension
         run: npx --yes @vscode/vsce package -o neomono.vsix
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neomono-vsix
+          path: neomono.vsix
+          retention-days: 30
+
+  publish-vscode:
+    name: Publish to VS Code Marketplace
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: neomono-vsix
 
       - name: Publish to VS Code Marketplace
         if: env.VSCE_PAT != ''
@@ -34,14 +72,55 @@ jobs:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: npx --yes @vscode/vsce publish --packagePath neomono.vsix
 
+  publish-openvsx:
+    name: Publish to Open VSX
+    needs: validate
+    runs-on: ubuntu-latest
+    # Si Open VSX falla, no debe matar el workflow entero
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: neomono-vsix
+
       - name: Publish to Open VSX
         if: env.OVSX_PAT != ''
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: npx --yes ovsx publish neomono.vsix -p "$OVSX_PAT"
 
+  release:
+    name: Create GitHub Release
+    needs: [publish-vscode, publish-openvsx]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download VSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: neomono-vsix
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: neomono.vsix
           generate_release_notes: true
+
+      - name: Report publication status
+        run: |
+          echo "📦 Release completed"
+          echo ""
+          echo "Marketplace status:"
+          echo "  VS Code Marketplace: ${{ needs.publish-vscode.result }}"
+          echo "  Open VSX: ${{ needs.publish-openvsx.result }}"
