@@ -1,0 +1,55 @@
+/*
+ * Neomono Deep Glow Effect
+ *
+ * Scoped specifically to the "Neomono Deep" theme.
+ * Deeper, more saturated glow colors that match the darker palette.
+ */
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk3,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk3,
+body[data-vscode-theme-name="Neomono Deep"] .mtk3 {
+  color: #a576e0;
+  text-shadow: 0 0 2px #a576e0, 0 0 10px #5a2d8f;
+}
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk4,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk4,
+body[data-vscode-theme-name="Neomono Deep"] .mtk4 {
+  color: #6dd0e8;
+  text-shadow: 0 0 2px #0a1920, 0 0 8px #6dd0e8;
+}
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk6,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk6,
+body[data-vscode-theme-name="Neomono Deep"] .mtk6 {
+  color: #e85aa8;
+  text-shadow: 0 0 2px #0a1920, 0 0 10px #e85aa8;
+}
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk8,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk8,
+body[data-vscode-theme-name="Neomono Deep"] .mtk8 {
+  color: #3dd660;
+  text-shadow: 0 0 2px #0a1920, 0 0 10px #1a8030;
+}
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk9,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk9,
+body[data-vscode-theme-name="Neomono Deep"] .mtk9 {
+  color: #e04040;
+  text-shadow: 0 0 2px #0a1920, 0 0 10px #e04040;
+}
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk12,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk12,
+body[data-vscode-theme-name="Neomono Deep"] .mtk12 {
+  color: #a576e0;
+  text-shadow: 0 0 2px #0a1920, 0 0 10px #a576e0;
+}
+
+:root[data-vscode-theme-name="Neomono Deep"] .monaco-workbench .mtk15,
+.monaco-workbench[data-vscode-theme-name="Neomono Deep"] .mtk15,
+body[data-vscode-theme-name="Neomono Deep"] .mtk15 {
+  color: #d8e070;
+  text-shadow: 0 0 2px #0a1920, 0 0 10px #d8e070;
+}

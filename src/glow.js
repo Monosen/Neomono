@@ -5,9 +5,45 @@ const CUSTOM_CSS_EXTENSION_ID = 'be5invis.vscode-custom-css';
 const CUSTOM_CSS_IMPORTS_KEY = 'vscode_custom_css.imports';
 const RELOAD_CUSTOM_CSS_COMMAND = 'extension.reloadCustomCSS';
 
-function getGlowCssUri() {
-    const glowCssPath = path.join(__dirname, '..', 'themes', 'neomono-glow.css');
+/**
+ * Map of theme labels to their corresponding glow CSS files.
+ * Each theme in the Neomono family can have its own glow variant.
+ */
+const THEME_GLOW_MAP = {
+    'Neomono': 'neomono-glow.css',
+    'Neomono Deep': 'neomono-deep-glow.css'
+};
+
+/**
+ * Get the currently active color theme from VS Code settings.
+ * @returns {string}
+ */
+function getActiveTheme() {
+    return vscode.workspace.getConfiguration('workbench').get('colorTheme');
+}
+
+/**
+ * Get the glow CSS URI for a specific theme.
+ * Falls back to the default neomono-glow.css if the theme has no dedicated glow.
+ * @param {string} themeName
+ * @returns {string}
+ */
+function getGlowCssUri(themeName) {
+    const cssFile = THEME_GLOW_MAP[themeName] || 'neomono-glow.css';
+    const glowCssPath = path.join(__dirname, '..', 'themes', cssFile);
     return vscode.Uri.file(glowCssPath).toString();
+}
+
+/**
+ * Get all known glow CSS URIs for the Neomono theme family.
+ * Used to clean up any orphaned glow styles when disabling or switching themes.
+ * @returns {string[]}
+ */
+function getAllGlowCssUris() {
+    return Object.values(THEME_GLOW_MAP).map((cssFile) => {
+        const glowCssPath = path.join(__dirname, '..', 'themes', cssFile);
+        return vscode.Uri.file(glowCssPath).toString();
+    });
 }
 
 function isCustomCssExtensionInstalled() {
@@ -22,9 +58,25 @@ function getNeomonoConfig() {
     };
 }
 
+/**
+ * Check if any Neomono glow CSS is currently imported.
+ * @returns {boolean}
+ */
 function isGlowEnabled() {
     const imports = vscode.workspace.getConfiguration().get(CUSTOM_CSS_IMPORTS_KEY) || [];
-    return imports.includes(getGlowCssUri());
+    const allGlowUris = getAllGlowCssUris();
+    return allGlowUris.some((uri) => imports.includes(uri));
+}
+
+/**
+ * Check if the glow CSS for the currently active theme is imported.
+ * @returns {boolean}
+ */
+function isActiveThemeGlowEnabled() {
+    const imports = vscode.workspace.getConfiguration().get(CUSTOM_CSS_IMPORTS_KEY) || [];
+    const activeTheme = getActiveTheme();
+    const glowUri = getGlowCssUri(activeTheme);
+    return imports.includes(glowUri);
 }
 
 async function updateImports(mutator) {
@@ -60,16 +112,20 @@ function showWarning(message, ...actions) {
 
 async function enableGlow() {
     try {
-        const glowCssUri = getGlowCssUri();
+        const activeTheme = getActiveTheme();
+        const glowCssUri = getGlowCssUri(activeTheme);
 
-        if (isGlowEnabled()) {
+        if (isActiveThemeGlowEnabled()) {
             showInfo(vscode.l10n.t('neonDreams.alreadyEnabled'));
             return;
         }
 
+        // Remove any other Neomono glow CSS first (in case user switched themes)
         await updateImports((imports) => {
-            imports.push(glowCssUri);
-            return imports;
+            const allGlowUris = getAllGlowCssUris();
+            const cleaned = imports.filter((item) => !allGlowUris.includes(item));
+            cleaned.push(glowCssUri);
+            return cleaned;
         });
 
         const installLabel = vscode.l10n.t('neonDreams.action.installExtension');
@@ -111,14 +167,16 @@ async function enableGlow() {
 
 async function disableGlow() {
     try {
-        const glowCssUri = getGlowCssUri();
-
         if (!isGlowEnabled()) {
             showInfo(vscode.l10n.t('neonDreams.notEnabled'));
             return;
         }
 
-        await updateImports((imports) => imports.filter((item) => item !== glowCssUri));
+        // Remove all Neomono glow CSS entries
+        await updateImports((imports) => {
+            const allGlowUris = getAllGlowCssUris();
+            return imports.filter((item) => !allGlowUris.includes(item));
+        });
 
         if (!isCustomCssExtensionInstalled()) {
             showWarning(vscode.l10n.t('neonDreams.disabledNoExtension'));
@@ -147,7 +205,7 @@ async function disableGlow() {
 }
 
 async function toggleGlow() {
-    if (isGlowEnabled()) {
+    if (isActiveThemeGlowEnabled()) {
         await disableGlow();
     } else {
         await enableGlow();
