@@ -24,6 +24,12 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+      - name: Compile TypeScript
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        run: npm test
+
       - name: Validate theme JSON and colors
         run: npm run validate:theme
 
