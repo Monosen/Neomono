@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 /**
- * Validate the Neomono color theme:
- *  - The JSON file parses.
+ * Validate all Neomono color themes:
+ *  - Every JSON file parses.
  *  - Every value in `colors` is a valid hex color (#RGB, #RRGGBB, #RRGGBBAA).
  *  - Every token color foreground is a valid hex color.
- *  - There are no duplicate keys in `colors` (best effort: JSON.parse already
- *    drops duplicates, but we reparse text to detect them).
+ *  - There are no duplicate keys in `colors`.
  */
 
 const fs = require('node:fs');
 const path = require('node:path');
 
-const THEME_PATH = path.join(__dirname, '..', 'themes', 'Neomono-color-theme.json');
+const THEMES_DIR = path.join(__dirname, '..', 'themes');
 const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 
 function fail(message) {
@@ -58,13 +57,16 @@ function findDuplicateKeys(jsonText) {
     return duplicates;
 }
 
-function main() {
-    if (!fs.existsSync(THEME_PATH)) {
-        fail(`Theme file not found at ${THEME_PATH}`);
+function validateTheme(themePath) {
+    const themeName = path.basename(themePath);
+    console.log(`\nValidating ${themeName}...`);
+
+    if (!fs.existsSync(themePath)) {
+        fail(`Theme file not found at ${themePath}`);
         return;
     }
 
-    const raw = fs.readFileSync(THEME_PATH, 'utf8');
+    const raw = fs.readFileSync(themePath, 'utf8');
 
     let theme;
     try {
@@ -110,11 +112,33 @@ function main() {
             ok(`All ${theme.tokenColors.length} tokenColors entries have valid foregrounds`);
         }
     }
+}
+
+function main() {
+    if (!fs.existsSync(THEMES_DIR)) {
+        fail(`Themes directory not found at ${THEMES_DIR}`);
+        return;
+    }
+
+    const themeFiles = fs.readdirSync(THEMES_DIR)
+        .filter(f => f.endsWith('-color-theme.json'))
+        .map(f => path.join(THEMES_DIR, f));
+
+    if (themeFiles.length === 0) {
+        fail(`No theme files found in ${THEMES_DIR}`);
+        return;
+    }
+
+    console.log(`Found ${themeFiles.length} theme(s) to validate`);
+
+    for (const themePath of themeFiles) {
+        validateTheme(themePath);
+    }
 
     if (process.exitCode && process.exitCode !== 0) {
         console.error('\nTheme validation failed.');
     } else {
-        console.log('\nTheme validation passed.');
+        console.log('\nAll theme validations passed.');
     }
 }
 
