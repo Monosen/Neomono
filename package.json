@@ -54,6 +54,11 @@
         "label": "Neomono",
         "uiTheme": "vs-dark",
         "path": "./themes/Neomono-color-theme.json"
+      },
+      {
+        "label": "Neomono Deep",
+        "uiTheme": "vs-dark",
+        "path": "./themes/Neomono-Deep-color-theme.json"
       }
     ],
     "commands": [
