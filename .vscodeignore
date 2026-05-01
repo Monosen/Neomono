@@ -25,3 +25,16 @@ bun.lockb
 **/*.vsix
 **/.DS_Store
 **/Thumbs.db
+
+# TypeScript source and config
+src/**
+tsconfig.json
+
+# Test files in compiled output
+out/test/**
+
+# Test configuration
+.vscode-test.js
+
+# Package manager files
+pnpm-workspace.yaml

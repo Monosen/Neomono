@@ -1,10 +1,10 @@
-const vscode = require('vscode');
-const glow = require('./glow');
+import * as vscode from 'vscode';
+import * as glow from './glow';
 
 /**
- * @param {vscode.ExtensionContext} context
+ * @param context - The VS Code extension context
  */
-function activate(context) {
+export function activate(context: vscode.ExtensionContext): void {
 	const enableGlow = vscode.commands.registerCommand('neomono.enableNeonDreams', () => glow.enableGlow());
 	const disableGlow = vscode.commands.registerCommand('neomono.disableNeonDreams', () => glow.disableGlow());
 	const toggleGlow = vscode.commands.registerCommand('neomono.toggleNeonDreams', () => glow.toggleGlow());
@@ -12,9 +12,4 @@ function activate(context) {
 	context.subscriptions.push(enableGlow, disableGlow, toggleGlow);
 }
 
-function deactivate() {}
-
-module.exports = {
-	activate,
-	deactivate
-};
+export function deactivate(): void {}

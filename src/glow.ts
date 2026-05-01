@@ -1,5 +1,5 @@
-const vscode = require('vscode');
-const path = require('path');
+import * as vscode from 'vscode';
+import * as path from 'path';
 
 const CUSTOM_CSS_EXTENSION_ID = 'be5invis.vscode-custom-css';
 const CUSTOM_CSS_IMPORTS_KEY = 'vscode_custom_css.imports';
@@ -9,26 +9,26 @@ const RELOAD_CUSTOM_CSS_COMMAND = 'extension.reloadCustomCSS';
  * Map of theme labels to their corresponding glow CSS files.
  * Each theme in the Neomono family can have its own glow variant.
  */
-const THEME_GLOW_MAP = {
+const THEME_GLOW_MAP: Record<string, string> = {
     'Neomono': 'neomono-glow.css',
     'Neomono Deep': 'neomono-deep-glow.css'
 };
 
 /**
  * Get the currently active color theme from VS Code settings.
- * @returns {string}
+ * @returns The active theme name
  */
-function getActiveTheme() {
-    return vscode.workspace.getConfiguration('workbench').get('colorTheme');
+function getActiveTheme(): string {
+    return vscode.workspace.getConfiguration('workbench').get<string>('colorTheme', '');
 }
 
 /**
  * Get the glow CSS URI for a specific theme.
  * Falls back to the default neomono-glow.css if the theme has no dedicated glow.
- * @param {string} themeName
- * @returns {string}
+ * @param themeName - The name of the theme
+ * @returns The URI string for the glow CSS file
  */
-function getGlowCssUri(themeName) {
+function getGlowCssUri(themeName: string): string {
     const cssFile = THEME_GLOW_MAP[themeName] || 'neomono-glow.css';
     const glowCssPath = path.join(__dirname, '..', 'themes', cssFile);
     return vscode.Uri.file(glowCssPath).toString();
@@ -37,56 +37,61 @@ function getGlowCssUri(themeName) {
 /**
  * Get all known glow CSS URIs for the Neomono theme family.
  * Used to clean up any orphaned glow styles when disabling or switching themes.
- * @returns {string[]}
+ * @returns Array of glow CSS URI strings
  */
-function getAllGlowCssUris() {
-    return Object.values(THEME_GLOW_MAP).map((cssFile) => {
+function getAllGlowCssUris(): string[] {
+    return Object.values(THEME_GLOW_MAP).map((cssFile: string) => {
         const glowCssPath = path.join(__dirname, '..', 'themes', cssFile);
         return vscode.Uri.file(glowCssPath).toString();
     });
 }
 
-function isCustomCssExtensionInstalled() {
+function isCustomCssExtensionInstalled(): boolean {
     return vscode.extensions.getExtension(CUSTOM_CSS_EXTENSION_ID) !== undefined;
 }
 
-function getNeomonoConfig() {
+interface NeomonoConfig {
+    autoReload: boolean;
+    showNotifications: boolean;
+}
+
+function getNeomonoConfig(): NeomonoConfig {
     const config = vscode.workspace.getConfiguration('neomono.neonDreams');
     return {
-        autoReload: config.get('autoReload', true),
-        showNotifications: config.get('showNotifications', true)
+        autoReload: config.get<boolean>('autoReload', true),
+        showNotifications: config.get<boolean>('showNotifications', true)
     };
 }
 
 /**
  * Check if any Neomono glow CSS is currently imported.
- * @returns {boolean}
+ * @returns True if any glow CSS is imported
  */
-function isGlowEnabled() {
-    const imports = vscode.workspace.getConfiguration().get(CUSTOM_CSS_IMPORTS_KEY) || [];
+function isGlowEnabled(): boolean {
+    const imports = vscode.workspace.getConfiguration().get<string[]>(CUSTOM_CSS_IMPORTS_KEY) || [];
     const allGlowUris = getAllGlowCssUris();
     return allGlowUris.some((uri) => imports.includes(uri));
 }
 
 /**
  * Check if the glow CSS for the currently active theme is imported.
- * @returns {boolean}
+ * @returns True if the active theme's glow is enabled
  */
-function isActiveThemeGlowEnabled() {
-    const imports = vscode.workspace.getConfiguration().get(CUSTOM_CSS_IMPORTS_KEY) || [];
+function isActiveThemeGlowEnabled(): boolean {
+    const imports = vscode.workspace.getConfiguration().get<string[]>(CUSTOM_CSS_IMPORTS_KEY) || [];
     const activeTheme = getActiveTheme();
     const glowUri = getGlowCssUri(activeTheme);
     return imports.includes(glowUri);
 }
 
-async function updateImports(mutator) {
+async function updateImports(mutator: (imports: string[]) => string[]): Promise<void> {
     const config = vscode.workspace.getConfiguration();
-    const current = config.get(CUSTOM_CSS_IMPORTS_KEY) || [];
+    const current = config.get<string[]>(CUSTOM_CSS_IMPORTS_KEY) || [];
     const next = mutator([...current]);
     await config.update(CUSTOM_CSS_IMPORTS_KEY, next, vscode.ConfigurationTarget.Global);
 }
 
-async function reloadCustomCss() {
+async function reloadCustomCss(): Promise<void> {
     try {
         await vscode.commands.executeCommand(RELOAD_CUSTOM_CSS_COMMAND);
     } catch {
@@ -94,7 +99,7 @@ async function reloadCustomCss() {
     }
 }
 
-function showInfo(message, ...actions) {
+function showInfo(message: string, ...actions: string[]): Thenable<string | undefined> {
     const { showNotifications } = getNeomonoConfig();
     if (!showNotifications) {
         return Promise.resolve(undefined);
@@ -102,7 +107,7 @@ function showInfo(message, ...actions) {
     return vscode.window.showInformationMessage(message, ...actions);
 }
 
-function showWarning(message, ...actions) {
+function showWarning(message: string, ...actions: string[]): Thenable<string | undefined> {
     const { showNotifications } = getNeomonoConfig();
     if (!showNotifications) {
         return Promise.resolve(undefined);
@@ -110,7 +115,7 @@ function showWarning(message, ...actions) {
     return vscode.window.showWarningMessage(message, ...actions);
 }
 
-async function enableGlow() {
+export async function enableGlow(): Promise<void> {
     try {
         const activeTheme = getActiveTheme();
         const glowCssUri = getGlowCssUri(activeTheme);
@@ -165,7 +170,7 @@ async function enableGlow() {
     }
 }
 
-async function disableGlow() {
+export async function disableGlow(): Promise<void> {
     try {
         if (!isGlowEnabled()) {
             showInfo(vscode.l10n.t('neonDreams.notEnabled'));
@@ -204,16 +209,10 @@ async function disableGlow() {
     }
 }
 
-async function toggleGlow() {
+export async function toggleGlow(): Promise<void> {
     if (isActiveThemeGlowEnabled()) {
         await disableGlow();
     } else {
         await enableGlow();
     }
 }
-
-module.exports = {
-    enableGlow,
-    disableGlow,
-    toggleGlow
-};
