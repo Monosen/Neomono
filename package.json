@@ -35,13 +35,13 @@
     "url": "https://github.com/Monosen/Neomono.git"
   },
   "engines": {
-    "vscode": "^1.80.0",
+    "vscode": "^1.118.0",
     "node": ">=18"
   },
   "categories": [
     "Themes"
   ],
-  "main": "./src/extension.js",
+  "main": "./out/extension.js",
   "l10n": "./l10n",
   "activationEvents": [
     "onCommand:neomono.enableNeonDreams",
@@ -95,19 +95,29 @@
     }
   },
   "scripts": {
+    "compile": "tsc",
+    "watch": "tsc --watch",
+    "test": "vscode-test",
     "validate:theme": "node scripts/validate-theme.js",
     "lint": "eslint src scripts",
     "badges:vscode": "node scripts/switch-badges.js vscode",
     "badges:ovsx": "node scripts/switch-badges.js ovsx",
-    "vscode:prepublish": "npm run validate:theme",
+    "vscode:prepublish": "npm run compile && npm run validate:theme",
     "package": "vsce package",
     "publish:vscode": "vsce publish",
     "publish:ovsx": "ovsx publish"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^25.6.0",
+    "@types/vscode": "^1.118.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.2.1",
     "eslint": "^9.17.0",
-    "ovsx": "^0.10.1"
+    "mocha": "^11.7.5",
+    "ovsx": "^0.10.1",
+    "typescript": "^6.0.3"
   }
 }

@@ -1,0 +1,118 @@
+import * as assert from 'assert';
+import * as path from 'path';
+import * as fs from 'fs';
+
+// Find project root by looking for package.json
+function findProjectRoot(startDir: string): string {
+    let current = startDir;
+    while (current !== path.dirname(current)) {
+        if (fs.existsSync(path.join(current, 'package.json'))) {
+            return current;
+        }
+        current = path.dirname(current);
+    }
+    throw new Error('Could not find project root');
+}
+
+const PROJECT_ROOT = findProjectRoot(__dirname);
+
+// Test glow module structure and constants
+// Note: Full integration tests that modify VS Code settings require
+// the Custom CSS extension to be installed. We test what we can without it.
+
+suite('Glow Module Structure Tests', () => {
+    test('should export enableGlow function', () => {
+        const glow = require(path.join(PROJECT_ROOT, 'out', 'glow'));
+        assert.strictEqual(typeof glow.enableGlow, 'function', 'enableGlow should be a function');
+    });
+
+    test('should export disableGlow function', () => {
+        const glow = require(path.join(PROJECT_ROOT, 'out', 'glow'));
+        assert.strictEqual(typeof glow.disableGlow, 'function', 'disableGlow should be a function');
+    });
+
+    test('should export toggleGlow function', () => {
+        const glow = require(path.join(PROJECT_ROOT, 'out', 'glow'));
+        assert.strictEqual(typeof glow.toggleGlow, 'function', 'toggleGlow should be a function');
+    });
+});
+
+suite('Glow CSS Files Tests', () => {
+    test('neomono-glow.css should exist', () => {
+        const glowPath = path.join(PROJECT_ROOT, 'themes', 'neomono-glow.css');
+        assert.ok(fs.existsSync(glowPath), 'neomono-glow.css should exist');
+    });
+    
+    test('neomono-deep-glow.css should exist', () => {
+        const glowPath = path.join(PROJECT_ROOT, 'themes', 'neomono-deep-glow.css');
+        assert.ok(fs.existsSync(glowPath), 'neomono-deep-glow.css should exist');
+    });
+    
+    test('neomono-glow.css should be scoped to Neomono theme', () => {
+        const glowPath = path.join(PROJECT_ROOT, 'themes', 'neomono-glow.css');
+        const content = fs.readFileSync(glowPath, 'utf8');
+        assert.ok(content.includes('[data-vscode-theme-name="Neomono"]'), 
+            'Should be scoped to Neomono theme exactly');
+    });
+    
+    test('neomono-deep-glow.css should be scoped to Neomono Deep theme', () => {
+        const glowPath = path.join(PROJECT_ROOT, 'themes', 'neomono-deep-glow.css');
+        const content = fs.readFileSync(glowPath, 'utf8');
+        assert.ok(content.includes('[data-vscode-theme-name="Neomono Deep"]'), 
+            'Should be scoped to Neomono Deep theme exactly');
+    });
+    
+    test('glow CSS files should have matching structure', () => {
+        const standardPath = path.join(PROJECT_ROOT, 'themes', 'neomono-glow.css');
+        const deepPath = path.join(PROJECT_ROOT, 'themes', 'neomono-deep-glow.css');
+        
+        const standardContent = fs.readFileSync(standardPath, 'utf8');
+        const deepContent = fs.readFileSync(deepPath, 'utf8');
+        
+        // Both should have the same token classes
+        const standardClasses = (standardContent.match(/\.mtk\d+/g) || []).sort();
+        const deepClasses = (deepContent.match(/\.mtk\d+/g) || []).sort();
+        
+        assert.deepStrictEqual(standardClasses, deepClasses, 
+            'Both glow files should style the same token classes');
+    });
+});
+
+suite('Theme Files Tests', () => {
+    test('Neomono theme JSON should exist and be valid', () => {
+        const themePath = path.join(PROJECT_ROOT, 'themes', 'Neomono-color-theme.json');
+        assert.ok(fs.existsSync(themePath), 'Theme file should exist');
+        
+        const theme = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+        assert.strictEqual(theme.name, 'Neomono', 'Should have correct name');
+        assert.ok(theme.colors, 'Should have colors object');
+        assert.ok(Array.isArray(theme.tokenColors), 'Should have tokenColors array');
+    });
+    
+    test('Neomono Deep theme JSON should exist and be valid', () => {
+        const themePath = path.join(PROJECT_ROOT, 'themes', 'Neomono-Deep-color-theme.json');
+        assert.ok(fs.existsSync(themePath), 'Deep theme file should exist');
+        
+        const theme = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+        assert.strictEqual(theme.name, 'Neomono Deep', 'Should have correct name');
+        assert.ok(theme.colors, 'Should have colors object');
+        assert.ok(Array.isArray(theme.tokenColors), 'Should have tokenColors array');
+    });
+    
+    test('Both themes should have same structure', () => {
+        const standardPath = path.join(PROJECT_ROOT, 'themes', 'Neomono-color-theme.json');
+        const deepPath = path.join(PROJECT_ROOT, 'themes', 'Neomono-Deep-color-theme.json');
+        
+        const standard = JSON.parse(fs.readFileSync(standardPath, 'utf8'));
+        const deep = JSON.parse(fs.readFileSync(deepPath, 'utf8'));
+        
+        const standardColorKeys = Object.keys(standard.colors).sort();
+        const deepColorKeys = Object.keys(deep.colors).sort();
+        
+        assert.deepStrictEqual(standardColorKeys, deepColorKeys, 
+            'Both themes should define the same workbench colors');
+        
+        assert.strictEqual(standard.tokenColors.length, deep.tokenColors.length,
+            'Both themes should have same number of token colors');
+    });
+});
