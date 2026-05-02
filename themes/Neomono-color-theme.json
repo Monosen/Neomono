@@ -200,10 +200,10 @@
     "editorBracketPairGuide.activeBackground5": "#f1fa8c80",
     "editorBracketPairGuide.activeBackground6": "#ffb86c80",
 
-    "editorStickyScroll.background": "#1e1f29",
+    "editorStickyScroll.background": "#282a36",
     "editorStickyScroll.border": "#44475a",
     "editorStickyScroll.shadow": "#00000040",
-    "editorStickyScrollHover.background": "#282a36",
+    "editorStickyScrollHover.background": "#44475a",
 
     "editorInlayHint.background": "#44475a40",
     "editorInlayHint.foreground": "#6272a4",
