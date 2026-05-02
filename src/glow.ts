@@ -94,6 +94,26 @@ function computeChecksum(filePath: string): string | null {
 }
 
 /**
+ * Resolve a checksum key from product.json to an actual file path on disk.
+ * VS Code stores relative paths without the "out/" prefix in product.json,
+ * but the actual files live under {appRoot}/out/{relativePath}.
+ * Falls back to {appRoot}/{relativePath} for non-compiled resources.
+ */
+function resolveChecksumFilePath(appRoot: string, relativePath: string): string | null {
+	// Try with "out/" prefix first (most common for compiled VS Code files)
+	const withOut = path.join(appRoot, 'out', relativePath);
+	if (fs.existsSync(withOut)) {
+		return withOut;
+	}
+	// Fall back to direct path (for non-compiled resources like product.json itself)
+	const direct = path.join(appRoot, relativePath);
+	if (fs.existsSync(direct)) {
+		return direct;
+	}
+	return null;
+}
+
+/**
  * Fix checksums in product.json after modifying VS Code core files.
  * This prevents the "Your Code installation appears to be corrupt" warning.
  */
@@ -120,8 +140,8 @@ function fixChecksums(): boolean {
 	let changed = false;
 
 	for (const [filePath, _expectedChecksum] of Object.entries(checksums as Record<string, string>)) {
-		const fullFilePath = path.join(appRoot, filePath);
-		if (!fs.existsSync(fullFilePath)) {
+		const fullFilePath = resolveChecksumFilePath(appRoot, filePath);
+		if (!fullFilePath) {
 			continue;
 		}
 
