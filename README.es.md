@@ -38,28 +38,57 @@
 
 Habilita el efecto de brillo para una experiencia cyberpunk completa.
 
-1.  Instala **[Custom CSS and JS Loader](https://marketplace.visualstudio.com/items?itemName=be5invis.vscode-custom-css)**.
+1.  Selecciona el tema: `Ctrl+K` `Ctrl+T` > **Neomono** o **Neomono Deep**.
 2.  Ejecuta el comando **`Neomono: Habilitar Neon Dreams`** (o **`Neomono: Alternar Neon Dreams`**).
-3.  Reinicia VS Code si se te pide.
+3.  Reinicia VS Code cuando se te pida.
 
 > [!NOTE]
-> Puedes ver una advertencia `[Unsupported]` en VS Code. Esto es normal y seguro.
-> Para ocultarla, agrega `"window.titleBarStyle": "custom"` a tu configuración.
+> Puedes ver una advertencia "Your Code installation appears to be corrupt" en VS Code. Esto es normal y seguro — la extensión modifica archivos internos de VS Code para inyectar el efecto glow. Puedes descartar esta advertencia con seguridad.
+
+### Personalizar el brillo del glow
+
+En tu `settings.json`:
+
+```json
+"neomono.neonDreams.brightness": 0.45
+```
+
+El valor debe ser un decimal de 0 a 1, donde 0.0 es totalmente transparente y 1.0 es brillo máximo. El valor por defecto es 0.45. Para ver los cambios, ejecuta de nuevo **Neomono: Habilitar Neon Dreams**.
+
+### Deshabilitar glow, mantener chrome
+
+Si quieres las actualizaciones del chrome del editor sin el glow de texto:
+
+```json
+"neomono.neonDreams.glow": false
+```
 
 ### Comandos
 
 | Comando | Descripción |
 | --- | --- |
-| `Neomono: Habilitar Neon Dreams` | Registra la hoja de estilo del glow y recarga Custom CSS. |
-| `Neomono: Deshabilitar Neon Dreams` | Elimina la hoja de estilo del glow y recarga Custom CSS. |
+| `Neomono: Habilitar Neon Dreams` | Habilita el efecto glow (requiere reinicio). |
+| `Neomono: Deshabilitar Neon Dreams` | Elimina el efecto glow (requiere reinicio). |
 | `Neomono: Alternar Neon Dreams` | Habilita o deshabilita según el estado actual. |
+| `Neomono: Habilitar Reactor Glow` | Habilita los colores reactivos de la interfaz. |
+| `Neomono: Deshabilitar Reactor Glow` | Deshabilita los colores reactivos de la interfaz. |
+| `Neomono: Alternar Reactor Glow` | Alterna los colores reactivos de la interfaz. |
 
 ### Ajustes
 
 | Ajuste | Por defecto | Descripción |
 | --- | --- | --- |
-| `neomono.neonDreams.autoReload` | `true` | Recarga Custom CSS automáticamente tras habilitar o deshabilitar el efecto. |
-| `neomono.neonDreams.showNotifications` | `true` | Muestra notificaciones informativas cuando cambia el estado. |
+| `neomono.neonDreams.brightness` | `0.45` | Brillo del glow (0.0 transparente, 1.0 brillo máximo). |
+| `neomono.neonDreams.glow` | `true` | Habilita el efecto text-shadow de glow. |
+| `neomono.neonDreams.showNotifications` | `true` | Muestra notificaciones cuando Neon Dreams cambia de estado. |
+| `neomono.reactor.enabled` | `true` | Habilita Reactor Glow (colores reactivos de la interfaz). |
+| `neomono.reactor.intensity` | `"moderate"` | Qué tan intensos deben sentirse los cambios de color. |
+| `neomono.reactor.affectStatusBar` | `true` | Permite que Reactor recoloque la barra de estado. |
+| `neomono.reactor.affectActivityBar` | `true` | Permite que Reactor recoloque la barra de actividad. |
+| `neomono.reactor.affectTitleBar` | `true` | Permite que Reactor tiña la barra de título. |
+| `neomono.reactor.affectEditorDiagnostics` | `true` | Intensifica los colores de errores y advertencias del editor. |
+| `neomono.reactor.affectEditorBackground` | `false` | Agrega un tinte sutil al fondo del editor según el estado. |
+| `neomono.reactor.affectTabBorder` | `true` | Recolorea el borde de la pestaña activa. |
 
 ## 📄 Licencia
 
