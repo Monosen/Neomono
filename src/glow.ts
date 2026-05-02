@@ -394,18 +394,30 @@ export async function toggleGlow(): Promise<void> {
 /**
  * Clean up any Neomono entries from the Custom CSS Loader settings.
  * This helps users migrate from the old method to the new one.
+ * Silently skips if the Custom CSS Loader extension is not installed,
+ * since the setting won't be registered and VS Code would throw an error.
  */
 async function cleanupCustomCssImports(): Promise<void> {
-	const config = vscode.workspace.getConfiguration();
-	const currentImports = config.get<string[]>('vscode_custom_css.imports', []);
-	const allGlowUris = Object.values(THEME_GLOW_MAP).map((cssFile: string) => {
-		const glowCssPath = path.join(path.dirname(__dirname), 'themes', cssFile);
-		return vscode.Uri.file(glowCssPath).toString();
-	});
+	// Check if the Custom CSS Loader extension is installed; if not, there's nothing to clean up
+	const customCssExtension = vscode.extensions.getExtension('be5invis.vscode-custom-css');
+	if (!customCssExtension) {
+		return;
+	}
 
-	const cleaned = currentImports.filter((item: string) => !allGlowUris.includes(item));
+	try {
+		const config = vscode.workspace.getConfiguration();
+		const currentImports = config.get<string[]>('vscode_custom_css.imports', []);
+		const allGlowUris = Object.values(THEME_GLOW_MAP).map((cssFile: string) => {
+			const glowCssPath = path.join(path.dirname(__dirname), 'themes', cssFile);
+			return vscode.Uri.file(glowCssPath).toString();
+		});
 
-	if (cleaned.length !== currentImports.length) {
-		await config.update('vscode_custom_css.imports', cleaned, vscode.ConfigurationTarget.Global);
+		const cleaned = currentImports.filter((item: string) => !allGlowUris.includes(item));
+
+		if (cleaned.length !== currentImports.length) {
+			await config.update('vscode_custom_css.imports', cleaned, vscode.ConfigurationTarget.Global);
+		}
+	} catch {
+		// Silently ignore — the Custom CSS Loader may be installed but misconfigured
 	}
 }
