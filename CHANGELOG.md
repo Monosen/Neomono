@@ -38,12 +38,30 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - GitHub Actions workflows for CI (validate + package `.vsix`) and Release (publish to VS Code Marketplace and Open VSX on tag `v*`)
 - `CONTRIBUTING.md`, issue templates (bug, theme request) and pull request template
 - `license`, `homepage`, `bugs`, `keywords`, `activationEvents`, and `engines.node` fields in `package.json`
+- **Reactor Glow**: reactive UI that changes colors based on active-file diagnostics and debug state (priority: debug > error > warning > normal). Configurable intensity and per-element targeting (status bar, activity bar, title bar, panel title, editor diagnostics, tab border, editor background tint)
+- **Neon Dreams is now self-contained**: no longer depends on the Custom CSS and JS Loader extension. Patching is done directly into VS Code's `workbench.html` (similar to Synthwave '84)
+- **Automatic checksum fixing**: after modifying VS Code core files, checksums in `product.json` are recalculated automatically to suppress the "corrupt installation" warning
+- **Real glow brightness control**: `neomono.neonDreams.brightness` (0.0–1.0) is converted to a 2-digit hex alpha and injected into glow `text-shadow` colors at build time
+- **Glow disable without losing chrome**: `neomono.neonDreams.glow` setting lets you disable the text-shadow effect while keeping editor chrome updates
+- **Advanced testing/debug colors**: ~20 new keys added to both Neomono and Neomono Deep themes (retired icons, coverage badges, minimap coverage, inline values, exception labels, etc.)
+- **3 new Reactor Glow commands**: `Neomono: Enable Reactor Glow`, `Disable Reactor Glow`, `Toggle Reactor Glow`
+- **7 Reactor Glow settings**: `enabled`, `intensity`, `affectStatusBar`, `affectActivityBar`, `affectTitleBar`, `affectPanelTitle`, `affectEditorDiagnostics`, `affectEditorBackground`, `affectTabBorder`
+- **Custom CSS Loader migration cleanup**: old `vscode_custom_css.imports` entries are automatically removed when migrating from the previous method
+- New i18n strings for all new features (English / Spanish)
 
 ### Changed
 
 - `neomono-glow.css` is now scoped to the Neomono theme to avoid leaking the glow into other themes
 - `.vscodeignore` now excludes `examples/`, `scripts/`, `.github/`, `README.es.md` and other dev-only files from the published `.vsix`
-- Notifications are now suppressed when `neomono.neonDreams.showNotifications` is `false`, and Custom CSS reload can happen automatically via `neomono.neonDreams.autoReload`
+- Notifications are now suppressed when `neomono.neonDreams.showNotifications` is `false`
+- Neon Dreams activation no longer requires an external extension; the reload notification now says "Reload VS Code" instead of "Reload Custom CSS"
+
+### Fixed
+
+- `fixChecksums()` now resolves paths with the `out/` prefix correctly (VS Code stores relative paths without `out/` in `product.json` but files live under `out/`)
+- `cleanupCustomCssImports()` no longer crashes with "not a registered configuration" when Custom CSS Loader is not installed
+- Glow effect now uses token CSS interception (MutationObserver on `.vscode-tokens-styles`) instead of static CSS selectors, making it robust against VS Code DOM changes
+- `package.json` corruption issue (missing `devDependencies`) resolved
 
 ## [0.0.8] - 2026-02-23
 
