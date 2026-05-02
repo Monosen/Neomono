@@ -10,12 +10,38 @@ const END_MARKER = '<!-- NEOMONO-GLOW-END -->';
 const SCRIPT_TAG = `${START_MARKER}<script src="neomono-glow.js"></script>${END_MARKER}`;
 const MARKER_REGEX = /\s*<!-- NEOMONO-GLOW-START -->.*?<!-- NEOMONO-GLOW-END -->/gs;
 
-// ── Theme-to-CSS mapping ────────────────────────────────────────────────────
+// ── Token color replacement maps ────────────────────────────────────────────
+// These map hex colors (as they appear in VS Code's generated token CSS)
+// to glow-enhanced CSS declarations. VS Code generates a <style class="vscode-tokens-styles">
+// tag with rules like `.mtk1 { color: #bd93f9; }`. We intercept that CSS and replace
+// the color declarations with glow-enhanced versions.
 
-const THEME_GLOW_MAP: Record<string, string> = {
-	'Neomono': 'neomono-glow.css',
-	'Neomono Deep': 'neomono-deep-glow.css'
+interface GlowMap {
+	[hexColor: string]: string;
+}
+
+const NEOMONO_GLOW_MAP: GlowMap = {
+	'#bd93f9': 'color: #bd93f9; text-shadow: 0 0 2px #bd93f9, 0 0 10px #6231a7;',
+	'#8be9fd': 'color: #8be9fd; text-shadow: 0 0 2px #100f2e, 0 0 8px #8be9fd;',
+	'#ff79c6': 'color: #ff79c6; text-shadow: 0 0 2px #100f2e, 0 0 10px #ff79c6;',
+	'#50fa7b': 'color: #50fa7b; text-shadow: 0 0 2px #100f2e, 0 0 10px #25a243;',
+	'#ff5555': 'color: #ff5555; text-shadow: 0 0 2px #100f2e, 0 0 10px #ff5555;',
+	'#f1fa8c': 'color: #f1fa8c; text-shadow: 0 0 2px #100f2e, 0 0 10px #f1fa8c;',
+	'#ffb86c': 'color: #ffb86c; text-shadow: 0 0 2px #100f2e, 0 0 10px #ffb86c;',
 };
+
+const NEOMONO_DEEP_GLOW_MAP: GlowMap = {
+	'#a576e0': 'color: #a576e0; text-shadow: 0 0 2px #a576e0, 0 0 10px #5a2d8f;',
+	'#6dd0e8': 'color: #6dd0e8; text-shadow: 0 0 2px #0a1920, 0 0 8px #6dd0e8;',
+	'#e85aa8': 'color: #e85aa8; text-shadow: 0 0 2px #0a1920, 0 0 10px #e85aa8;',
+	'#3dd660': 'color: #3dd660; text-shadow: 0 0 2px #0a1920, 0 0 10px #1a8030;',
+	'#e04040': 'color: #e04040; text-shadow: 0 0 2px #0a1920, 0 0 10px #e04040;',
+	'#d8e070': 'color: #d8e070; text-shadow: 0 0 2px #0a1920, 0 0 10px #d8e070;',
+	'#e8a070': 'color: #e8a070; text-shadow: 0 0 2px #0a1920, 0 0 10px #e8a070;',
+};
+
+// Combined map for both themes — we detect which one is active at runtime
+const ALL_GLOW_REPLACEMENTS: GlowMap = { ...NEOMONO_GLOW_MAP, ...NEOMONO_DEEP_GLOW_MAP };
 
 // ── Configuration ───────────────────────────────────────────────────────────
 
@@ -36,22 +62,18 @@ function getConfig(): NeonDreamsConfig {
 
 // ── Path resolution ────────────────────────────────────────────────────────
 
-/**
- * Resolve workbench HTML path and associated JS file path.
- * Handles different VS Code versions and installation layouts.
- */
 function resolveWorkbenchPaths(): { htmlFile: string; jsFile: string } | null {
 	const appRoot = vscode.env.appRoot;
 	const base = path.join(appRoot, 'out', 'vs', 'code');
 
 	const electronBaseCandidates = [
-		'electron-sandbox',   // VS Code 1.70+ (newer)
-		'electron-browser'     // VS Code 1.70- and 1.102+ (legacy)
+		'electron-sandbox',
+		'electron-browser'
 	];
 
 	const htmlCandidates = [
-		'workbench.esm.html',  // VS Code 1.94+
-		'workbench.html'       // Older versions
+		'workbench.esm.html',
+		'workbench.html'
 	];
 
 	for (const electronBase of electronBaseCandidates) {
@@ -69,9 +91,6 @@ function resolveWorkbenchPaths(): { htmlFile: string; jsFile: string } | null {
 	return null;
 }
 
-/**
- * Resolve the product.json path for checksum fixing.
- */
 function resolveProductJsonPath(): string | null {
 	const appRoot = vscode.env.appRoot;
 	const productJsonPath = path.join(appRoot, 'product.json');
@@ -80,10 +99,6 @@ function resolveProductJsonPath(): string | null {
 
 // ── Checksum fixing ─────────────────────────────────────────────────────────
 
-/**
- * Compute a VS Code-compatible checksum for a file.
- * Uses SHA-256 encoded as base64url (no padding).
- */
 function computeChecksum(filePath: string): string | null {
 	try {
 		const content = fs.readFileSync(filePath);
@@ -93,19 +108,11 @@ function computeChecksum(filePath: string): string | null {
 	}
 }
 
-/**
- * Resolve a checksum key from product.json to an actual file path on disk.
- * VS Code stores relative paths without the "out/" prefix in product.json,
- * but the actual files live under {appRoot}/out/{relativePath}.
- * Falls back to {appRoot}/{relativePath} for non-compiled resources.
- */
 function resolveChecksumFilePath(appRoot: string, relativePath: string): string | null {
-	// Try with "out/" prefix first (most common for compiled VS Code files)
 	const withOut = path.join(appRoot, 'out', relativePath);
 	if (fs.existsSync(withOut)) {
 		return withOut;
 	}
-	// Fall back to direct path (for non-compiled resources like product.json itself)
 	const direct = path.join(appRoot, relativePath);
 	if (fs.existsSync(direct)) {
 		return direct;
@@ -113,10 +120,6 @@ function resolveChecksumFilePath(appRoot: string, relativePath: string): string 
 	return null;
 }
 
-/**
- * Fix checksums in product.json after modifying VS Code core files.
- * This prevents the "Your Code installation appears to be corrupt" warning.
- */
 function fixChecksums(): boolean {
 	const productJsonPath = resolveProductJsonPath();
 	if (!productJsonPath) {
@@ -167,54 +170,90 @@ function fixChecksums(): boolean {
 
 // ── JS generation ──────────────────────────────────────────────────────────
 
-/**
- * Read all glow CSS files and combine them into a single CSS string.
- */
-function readAllGlowCss(): string {
-	const extensionDir = path.dirname(__dirname);
-	const themesDir = path.join(extensionDir, 'themes');
-	const parts: string[] = [];
+function escapeForJsString(str: string): string {
+	return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+}
 
-	for (const cssFile of Object.values(THEME_GLOW_MAP)) {
-		const cssPath = path.join(themesDir, cssFile);
-		try {
-			const content = fs.readFileSync(cssPath, 'utf-8');
-			// Strip CSS comment blocks (they're not needed at runtime)
-			const stripped = content.replace(/\/\*[\s\S]*?\*\//g, '').trim();
-			if (stripped) {
-				parts.push(stripped);
-			}
-		} catch {
-			// Skip missing files gracefully
+function generateGlowJs(disableGlow: boolean): string {
+	// Build the token replacement map as a JS object literal
+	const mapEntries = Object.entries(ALL_GLOW_REPLACEMENTS)
+		.map(([color, replacement]) => {
+			return `\t\t'${color}': '${escapeForJsString(replacement)}'`;
+		})
+		.join(',\n');
+
+	return `(function() {
+	'use strict';
+
+	const TOKEN_REPLACEMENTS = {
+${mapEntries}
+	};
+
+	const THEME_NAMES = ['Neomono', 'Neomono Deep'];
+	const DISABLE_GLOW = ${disableGlow};
+
+	function isNeomonoTheme() {
+		const htmlTheme = document.documentElement.getAttribute('data-vscode-theme-name');
+		const bodyTheme = document.body.getAttribute('data-vscode-theme-name');
+		return THEME_NAMES.includes(htmlTheme) || THEME_NAMES.includes(bodyTheme);
+	}
+
+	function hasNeomonoColors(styles) {
+		return Object.keys(TOKEN_REPLACEMENTS).some(function(color) {
+			return styles.includes(color);
+		});
+	}
+
+	function replaceTokens(styles) {
+		return Object.keys(TOKEN_REPLACEMENTS).reduce(function(acc, color) {
+			const re = new RegExp('color: ' + color + ';', 'gi');
+			return acc.replace(re, TOKEN_REPLACEMENTS[color]);
+		}, styles);
+	}
+
+	function initGlow(observer) {
+		const tokensEl = document.querySelector('.vscode-tokens-styles');
+		if (!tokensEl) {
+			return;
+		}
+
+		if (!isNeomonoTheme()) {
+			return;
+		}
+
+		if (!hasNeomonoColors(tokensEl.innerText)) {
+			return;
+		}
+
+		if (document.getElementById('neomono-glow-styles')) {
+			return;
+		}
+
+		const originalStyles = tokensEl.innerText;
+		const updatedStyles = DISABLE_GLOW
+			? originalStyles
+			: replaceTokens(originalStyles);
+
+		const newStyleTag = document.createElement('style');
+		newStyleTag.id = 'neomono-glow-styles';
+		newStyleTag.textContent = updatedStyles.replace(/(\r\n|\n|\r)/gm, '');
+		document.body.appendChild(newStyleTag);
+
+		if (observer) {
+			observer.disconnect();
 		}
 	}
 
-	return parts.join('\n');
-}
+	const observer = new MutationObserver(function(mutationsList, observer) {
+		for (let i = 0; i < mutationsList.length; i++) {
+			const mutation = mutationsList[i];
+			if (mutation.type === 'attributes' || mutation.type === 'childList') {
+				initGlow(observer);
+			}
+		}
+	});
 
-/**
- * Generate the JS file content that injects the glow CSS into the DOM.
- * The glow brightness can be configured via neomono.neonDreams.brightness.
- */
-function generateGlowJs(cssContent: string, brightness: number): string {
-	const disableGlow = !getConfig().glow;
-
-	// Apply brightness to the CSS if glow is enabled
-	let finalCss = cssContent;
-	if (!disableGlow) {
-		// The text-shadow values already use opacity via hex alpha.
-		// Brightness is already baked into the CSS files.
-		// Future enhancement: dynamically adjust brightness.
-	}
-
-	// Escape backticks and ${} in CSS content for template literal
-	const escapedCss = finalCss.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
-
-	return `(function(){
-	var s=document.createElement('style');
-	s.id='neomono-glow-styles';
-	s.textContent=\`${escapedCss}\`;
-	document.head.appendChild(s);
+	observer.observe(document.body, { attributes: true, childList: true });
 })();`;
 }
 
@@ -224,9 +263,6 @@ function isGlowPatched(htmlContent: string): boolean {
 	return htmlContent.includes(START_MARKER);
 }
 
-/**
- * Apply the glow patch to workbench.html and write the JS file.
- */
 export async function enableGlow(): Promise<void> {
 	const { showNotifications } = getConfig();
 
@@ -237,19 +273,11 @@ export async function enableGlow(): Promise<void> {
 	}
 
 	const { htmlFile, jsFile } = paths;
-
-	// Read CSS content
-	const cssContent = readAllGlowCss();
-	if (!cssContent) {
-		vscode.window.showErrorMessage(vscode.l10n.t('neonDreams.cssNotFound'));
-		return;
-	}
-
-	// Generate JS
-	const jsContent = generateGlowJs(cssContent, getConfig().brightness);
+	const disableGlow = !getConfig().glow;
 
 	try {
-		// Write JS file
+		// Generate the glow JS
+		const jsContent = generateGlowJs(disableGlow);
 		fs.writeFileSync(jsFile, jsContent, 'utf-8');
 
 		// Patch workbench.html
@@ -261,7 +289,7 @@ export async function enableGlow(): Promise<void> {
 			const reloadLabel = vscode.l10n.t('neonDreams.action.reloadWindow');
 			if (showNotifications) {
 				const selection = await vscode.window.showInformationMessage(
-					vscode.l10n.t('neonDreams.alreadyEnabledRefresh'),
+					vscode.l10n.t('neonDreams.enabledNeedsRefresh'),
 					reloadLabel
 				);
 				if (selection === reloadLabel) {
@@ -309,9 +337,6 @@ export async function enableGlow(): Promise<void> {
 	}
 }
 
-/**
- * Remove the glow patch from workbench.html and delete the JS file.
- */
 export async function disableGlow(): Promise<void> {
 	const { showNotifications } = getConfig();
 
@@ -369,9 +394,6 @@ export async function disableGlow(): Promise<void> {
 	}
 }
 
-/**
- * Toggle the glow on or off.
- */
 export async function toggleGlow(): Promise<void> {
 	const paths = resolveWorkbenchPaths();
 	if (!paths) {
@@ -393,12 +415,9 @@ export async function toggleGlow(): Promise<void> {
 
 /**
  * Clean up any Neomono entries from the Custom CSS Loader settings.
- * This helps users migrate from the old method to the new one.
- * Silently skips if the Custom CSS Loader extension is not installed,
- * since the setting won't be registered and VS Code would throw an error.
+ * Silently skips if the Custom CSS Loader extension is not installed.
  */
 async function cleanupCustomCssImports(): Promise<void> {
-	// Check if the Custom CSS Loader extension is installed; if not, there's nothing to clean up
 	const customCssExtension = vscode.extensions.getExtension('be5invis.vscode-custom-css');
 	if (!customCssExtension) {
 		return;
@@ -407,8 +426,11 @@ async function cleanupCustomCssImports(): Promise<void> {
 	try {
 		const config = vscode.workspace.getConfiguration();
 		const currentImports = config.get<string[]>('vscode_custom_css.imports', []);
-		const allGlowUris = Object.values(THEME_GLOW_MAP).map((cssFile: string) => {
-			const glowCssPath = path.join(path.dirname(__dirname), 'themes', cssFile);
+
+		const extensionDir = path.dirname(__dirname);
+		const glowCssFiles = ['neomono-glow.css', 'neomono-deep-glow.css'];
+		const allGlowUris = glowCssFiles.map((cssFile: string) => {
+			const glowCssPath = path.join(extensionDir, 'themes', cssFile);
 			return vscode.Uri.file(glowCssPath).toString();
 		});
 
@@ -418,6 +440,6 @@ async function cleanupCustomCssImports(): Promise<void> {
 			await config.update('vscode_custom_css.imports', cleaned, vscode.ConfigurationTarget.Global);
 		}
 	} catch {
-		// Silently ignore — the Custom CSS Loader may be installed but misconfigured
+		// Silently ignore
 	}
 }
