@@ -76,7 +76,9 @@
     "sideBySideEditor.verticalBorder": "#44475a",
     "panelTitle.activeBorder": "#bd93f9",
     "panelTitle.activeForeground": "#f8f8f2",
+    "panelTitle.activeBackground": "#282a36",
     "panelTitle.inactiveForeground": "#6272a4",
+    "panelTitle.inactiveBackground": "#1e1f29",
     "panelInput.border": "#44475a",
     "panelSection.border": "#44475a",
     "panelSection.dropBackground": "#44475a",
@@ -418,7 +420,12 @@
     "chat.slashCommandForeground": "#bd93f9",
     "chat.avatarBackground": "#44475a",
     "chat.avatarForeground": "#f8f8f2",
-    "chat.editedFileForeground": "#ffb86c"
+    "chat.editedFileForeground": "#ffb86c",
+
+    "welcomePage.background": "#282a36",
+    "welcomePage.buttonBackground": "#8be9fd",
+    "welcomePage.buttonForeground": "#282a36",
+    "welcomePage.buttonHoverBackground": "#a3f0ff"
   },
   "semanticHighlighting": true,
   "semanticTokenColors": {
