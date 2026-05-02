@@ -3,6 +3,19 @@
   "command.enableNeonDreams.title": "Habilitar Neon Dreams",
   "command.disableNeonDreams.title": "Deshabilitar Neon Dreams",
   "command.toggleNeonDreams.title": "Alternar Neon Dreams",
-  "config.autoReload.description": "Dispara automáticamente la recarga de Custom CSS al habilitar o deshabilitar Neon Dreams.",
-  "config.showNotifications.description": "Muestra notificaciones informativas cuando Neon Dreams cambia de estado."
+  "command.enableReactorGlow.title": "Habilitar Reactor Glow",
+  "command.disableReactorGlow.title": "Deshabilitar Reactor Glow",
+  "command.toggleReactorGlow.title": "Alternar Reactor Glow",
+  "config.brightness.description": "Establece el brillo del efecto Neon Dreams (0.0 transparente, 1.0 brillo máximo).",
+  "config.glow.description": "Habilita el efecto de brillo (text-shadow). Cuando está deshabilitado, solo se aplican las actualizaciones de chrome del editor.",
+  "config.showNotifications.description": "Muestra notificaciones informativas cuando Neon Dreams cambia de estado.",
+  "config.reactor.enabled.description": "Habilita Reactor Glow, haciendo que la interfaz de Neomono reaccione a diagnósticos y depuración en el archivo activo.",
+  "config.reactor.intensity.description": "Controla qué tan intensos deben sentirse los cambios de color de Reactor Glow.",
+  "config.reactor.affectStatusBar.description": "Permite que Reactor Glow recoloree la barra de estado.",
+  "config.reactor.affectActivityBar.description": "Permite que Reactor Glow recoloree el fondo y borde de la barra de actividad.",
+  "config.reactor.affectTitleBar.description": "Permite que Reactor Glow tiña la barra de título activa.",
+  "config.reactor.affectPanelTitle.description": "Permite que Reactor Glow recoloree el borde del título del panel activo.",
+  "config.reactor.affectEditorDiagnostics.description": "Permite que Reactor Glow intensifique los colores de errores y advertencias del editor.",
+  "config.reactor.affectEditorBackground.description": "Permite que Reactor Glow agregue un tinte sutil al fondo del editor según el estado.",
+  "config.reactor.affectTabBorder.description": "Permite que Reactor Glow recoloree el borde de la pestaña activa."
 }

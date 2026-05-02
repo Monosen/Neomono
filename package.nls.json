@@ -3,6 +3,19 @@
   "command.enableNeonDreams.title": "Enable Neon Dreams",
   "command.disableNeonDreams.title": "Disable Neon Dreams",
   "command.toggleNeonDreams.title": "Toggle Neon Dreams",
-  "config.autoReload.description": "Automatically trigger the Custom CSS reload after enabling or disabling Neon Dreams.",
-  "config.showNotifications.description": "Show informational notifications when Neon Dreams changes state."
+  "command.enableReactorGlow.title": "Enable Reactor Glow",
+  "command.disableReactorGlow.title": "Disable Reactor Glow",
+  "command.toggleReactorGlow.title": "Toggle Reactor Glow",
+  "config.brightness.description": "Set the brightness of the Neon Dreams glow effect (0.0 fully transparent, 1.0 fully bright).",
+  "config.glow.description": "Enable the glow text-shadow effect. When disabled, only editor chrome updates are applied.",
+  "config.showNotifications.description": "Show informational notifications when Neon Dreams changes state.",
+  "config.reactor.enabled.description": "Enable Reactor Glow, which makes the Neomono UI react to diagnostics and debugging in the active file.",
+  "config.reactor.intensity.description": "Control how strong Reactor Glow color shifts should feel.",
+  "config.reactor.affectStatusBar.description": "Let Reactor Glow recolor the status bar.",
+  "config.reactor.affectActivityBar.description": "Let Reactor Glow recolor the activity bar background and border.",
+  "config.reactor.affectTitleBar.description": "Let Reactor Glow tint the active title bar.",
+  "config.reactor.affectPanelTitle.description": "Let Reactor Glow recolor the active panel title border.",
+  "config.reactor.affectEditorDiagnostics.description": "Let Reactor Glow intensify editor error and warning colors.",
+  "config.reactor.affectEditorBackground.description": "Let Reactor Glow add a subtle state-based tint to the editor background.",
+  "config.reactor.affectTabBorder.description": "Let Reactor Glow recolor the active tab border."
 }

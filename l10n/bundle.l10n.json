@@ -1,12 +1,19 @@
 {
   "neonDreams.alreadyEnabled": "Neon Dreams is already enabled.",
   "neonDreams.notEnabled": "Neon Dreams is not enabled.",
-  "neonDreams.enabledNeedsExtension": "✨ Neon Dreams configured! Install the \"Custom CSS and JS Loader\" extension to apply the effect.",
-  "neonDreams.enabledNeedsReload": "✨ Neon Dreams enabled! Run \"Reload Custom CSS and JS\" to apply the changes.",
-  "neonDreams.disabledNoExtension": "🌙 Neon Dreams disabled in settings. Note: the \"Custom CSS and JS Loader\" extension is not installed.",
-  "neonDreams.disabledNeedsReload": "🌙 Neon Dreams disabled. Run \"Reload Custom CSS and JS\" to apply the changes.",
+  "neonDreams.enabledNeedsReload": "✨ Neon Dreams enabled! Reload VS Code to apply the changes.",
+  "neonDreams.enabledNeedsRefresh": "✨ Neon Dreams updated! Reload VS Code to apply changes.",
+  "neonDreams.enabledChecksumWarning": "✨ Neon Dreams enabled! Reload VS Code to apply changes. Note: you may see a corruption warning — this is normal.",
+  "neonDreams.disabledNeedsReload": "🌙 Neon Dreams disabled. Reload VS Code to apply changes.",
+  "neonDreams.disabledChecksumWarning": "🌙 Neon Dreams disabled. Reload VS Code to apply changes. Note: you may see a corruption warning — this is normal.",
   "neonDreams.enableError": "Error enabling Neon Dreams: {0}",
   "neonDreams.disableError": "Error disabling Neon Dreams: {0}",
-  "neonDreams.action.installExtension": "Install Extension",
-  "neonDreams.action.reloadCss": "Reload CSS"
+  "neonDreams.permissionDenied": "Neon Dreams could not modify VS Code core files. Try running VS Code with administrator privileges.",
+  "neonDreams.workbenchNotFound": "Neon Dreams could not find the VS Code workbench file. This may be due to a VS Code version change. Please open an issue on GitHub.",
+  "neonDreams.cssNotFound": "Neon Dreams could not find the glow CSS files. Please reinstall the extension.",
+  "neonDreams.action.reloadWindow": "Reload Window",
+  "reactor.enabled": "✨ Reactor Glow enabled! The UI will now react to errors, warnings, and debugging.",
+  "reactor.disabled": "🌙 Reactor Glow disabled. The UI will return to its default colors.",
+  "reactor.alreadyEnabled": "Reactor Glow is already enabled.",
+  "reactor.alreadyDisabled": "Reactor Glow is already disabled."
 }

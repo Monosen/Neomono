@@ -1,12 +1,19 @@
 {
   "neonDreams.alreadyEnabled": "¡Neon Dreams ya está habilitado!",
   "neonDreams.notEnabled": "Neon Dreams no está habilitado.",
-  "neonDreams.enabledNeedsExtension": "✨ ¡Neon Dreams configurado! Instala la extensión \"Custom CSS and JS Loader\" para aplicar el efecto.",
-  "neonDreams.enabledNeedsReload": "✨ ¡Neon Dreams habilitado! Ejecuta \"Reload Custom CSS and JS\" para aplicar los cambios.",
-  "neonDreams.disabledNoExtension": "🌙 Neon Dreams deshabilitado en la configuración. Nota: la extensión \"Custom CSS and JS Loader\" no está instalada.",
-  "neonDreams.disabledNeedsReload": "🌙 Neon Dreams deshabilitado. Ejecuta \"Reload Custom CSS and JS\" para aplicar los cambios.",
+  "neonDreams.enabledNeedsReload": "✨ ¡Neon Dreams habilitado! Recarga VS Code para aplicar los cambios.",
+  "neonDreams.enabledNeedsRefresh": "✨ ¡Neon Dreams actualizado! Recarga VS Code para aplicar los cambios.",
+  "neonDreams.enabledChecksumWarning": "✨ ¡Neon Dreams habilitado! Recarga VS Code para aplicar los cambios. Nota: puedes ver una advertencia de corrupción — esto es normal.",
+  "neonDreams.disabledNeedsReload": "🌙 Neon Dreams deshabilitado. Recarga VS Code para aplicar los cambios.",
+  "neonDreams.disabledChecksumWarning": "🌙 Neon Dreams deshabilitado. Recarga VS Code para aplicar los cambios. Nota: puedes ver una advertencia de corrupción — esto es normal.",
   "neonDreams.enableError": "Error al habilitar Neon Dreams: {0}",
   "neonDreams.disableError": "Error al deshabilitar Neon Dreams: {0}",
-  "neonDreams.action.installExtension": "Instalar extensión",
-  "neonDreams.action.reloadCss": "Recargar CSS"
+  "neonDreams.permissionDenied": "Neon Dreams no pudo modificar los archivos de VS Code. Intenta ejecutar VS Code con privilegios de administrador.",
+  "neonDreams.workbenchNotFound": "Neon Dreams no pudo encontrar el archivo workbench de VS Code. Puede deberse a un cambio de versión. Abre un issue en GitHub.",
+  "neonDreams.cssNotFound": "Neon Dreams no pudo encontrar los archivos CSS del efecto glow. Reinstala la extensión.",
+  "neonDreams.action.reloadWindow": "Recargar ventana",
+  "reactor.enabled": "✨ ¡Reactor Glow habilitado! La interfaz ahora reaccionará a errores, advertencias y depuración.",
+  "reactor.disabled": "🌙 Reactor Glow deshabilitado. La interfaz volverá a sus colores predeterminados.",
+  "reactor.alreadyEnabled": "Reactor Glow ya está habilitado.",
+  "reactor.alreadyDisabled": "Reactor Glow ya está deshabilitado."
 }

@@ -18,6 +18,9 @@ suite('Extension Test Suite', () => {
         assert.ok(neomonoCommands.includes('neomono.enableNeonDreams'), 'enableNeonDreams command should be registered');
         assert.ok(neomonoCommands.includes('neomono.disableNeonDreams'), 'disableNeonDreams command should be registered');
         assert.ok(neomonoCommands.includes('neomono.toggleNeonDreams'), 'toggleNeonDreams command should be registered');
+        assert.ok(neomonoCommands.includes('neomono.enableReactorGlow'), 'enableReactorGlow command should be registered');
+        assert.ok(neomonoCommands.includes('neomono.disableReactorGlow'), 'disableReactorGlow command should be registered');
+        assert.ok(neomonoCommands.includes('neomono.toggleReactorGlow'), 'toggleReactorGlow command should be registered');
     });
 
     test('Should contribute both themes', () => {

@@ -71,20 +71,92 @@
         "command": "neomono.toggleNeonDreams",
         "title": "%command.toggleNeonDreams.title%",
         "category": "Neomono"
+      },
+      {
+        "command": "neomono.enableReactorGlow",
+        "title": "%command.enableReactorGlow.title%",
+        "category": "Neomono"
+      },
+      {
+        "command": "neomono.disableReactorGlow",
+        "title": "%command.disableReactorGlow.title%",
+        "category": "Neomono"
+      },
+      {
+        "command": "neomono.toggleReactorGlow",
+        "title": "%command.toggleReactorGlow.title%",
+        "category": "Neomono"
       }
     ],
     "configuration": {
       "title": "Neomono",
       "properties": {
-        "neomono.neonDreams.autoReload": {
+        "neomono.neonDreams.brightness": {
+          "type": "number",
+          "default": 0.45,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%config.brightness.description%"
+        },
+        "neomono.neonDreams.glow": {
           "type": "boolean",
           "default": true,
-          "description": "%config.autoReload.description%"
+          "description": "%config.glow.description%"
         },
         "neomono.neonDreams.showNotifications": {
           "type": "boolean",
           "default": true,
           "description": "%config.showNotifications.description%"
+        },
+        "neomono.reactor.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.enabled.description%"
+        },
+        "neomono.reactor.intensity": {
+          "type": "string",
+          "enum": [
+            "subtle",
+            "moderate",
+            "intense"
+          ],
+          "default": "moderate",
+          "description": "%config.reactor.intensity.description%"
+        },
+        "neomono.reactor.affectStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.affectStatusBar.description%"
+        },
+        "neomono.reactor.affectActivityBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.affectActivityBar.description%"
+        },
+        "neomono.reactor.affectTitleBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.affectTitleBar.description%"
+        },
+        "neomono.reactor.affectPanelTitle": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.affectPanelTitle.description%"
+        },
+        "neomono.reactor.affectEditorDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.affectEditorDiagnostics.description%"
+        },
+        "neomono.reactor.affectEditorBackground": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.reactor.affectEditorBackground.description%"
+        },
+        "neomono.reactor.affectTabBorder": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.reactor.affectTabBorder.description%"
         }
       }
     }
