@@ -430,22 +430,32 @@
   "semanticHighlighting": true,
   "semanticTokenColors": {
     "class": "#8be9fd",
+    "class.defaultLibrary": "#8be9fd",
     "interface": "#8be9fd",
+    "interface.defaultLibrary": "#8be9fd",
     "enum": "#8be9fd",
-    "function": "#50fa7b",
-    "method": "#50fa7b",
-    "parameter": "#ffb86c",
-    "property": "#bd93f9",
-    "variable.readonly": "#bd93f9",
-    "variable.defaultLibrary": "#ff79c6",
-    "namespace": "#ff79c6",
+    "enum.defaultLibrary": "#8be9fd",
     "type": "#8be9fd",
+    "type.defaultLibrary": "#8be9fd",
     "struct": "#8be9fd",
     "typeParameter": "#8be9fd",
+    "function": "#50fa7b",
+    "function.defaultLibrary": "#50fa7b",
+    "method": "#50fa7b",
+    "method.defaultLibrary": "#50fa7b",
+    "parameter": "#ffb86c",
+    "property": "#bd93f9",
+    "property.readonly": "#bd93f9",
+    "variable": "#f8f8f2",
+    "variable.readonly": "#bd93f9",
+    "variable.defaultLibrary": "#ff79c6",
+    "variable.readonly.defaultLibrary": "#bd93f9",
     "enumMember": "#bd93f9",
+    "enumMember.defaultLibrary": "#bd93f9",
     "event": "#50fa7b",
     "macro": "#50fa7b",
     "label": "#ff79c6",
+    "namespace": "#ff79c6",
     "comment": "#6272a4",
     "string": "#f1fa8c",
     "keyword": "#ff79c6",
@@ -488,6 +498,27 @@
       "scope": ["keyword", "storage.type", "storage.modifier"],
       "settings": {
         "foreground": "#ff79c6"
+      }
+    },
+    {
+      "name": "Java New Keyword",
+      "scope": ["keyword.other.new"],
+      "settings": {
+        "foreground": "#ff79c6"
+      }
+    },
+    {
+      "name": "Java Primitive Types",
+      "scope": ["storage.type.primitive"],
+      "settings": {
+        "foreground": "#8be9fd"
+      }
+    },
+    {
+      "name": "Java Enum Constants",
+      "scope": ["constant.other.enum"],
+      "settings": {
+        "foreground": "#bd93f9"
       }
     },
     {
