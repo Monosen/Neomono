@@ -20,24 +20,27 @@ interface GlowMap {
 	[hexColor: string]: string;
 }
 
+// Token color replacement maps with [ALPHA] placeholder.
+// [ALPHA] is replaced at build time with a 2-digit hex opacity derived from
+// the user's brightness setting (0.0→00, 1.0→FF).
 const NEOMONO_GLOW_MAP: GlowMap = {
-	'#bd93f9': 'color: #bd93f9; text-shadow: 0 0 2px #bd93f9, 0 0 10px #6231a7;',
-	'#8be9fd': 'color: #8be9fd; text-shadow: 0 0 2px #100f2e, 0 0 8px #8be9fd;',
-	'#ff79c6': 'color: #ff79c6; text-shadow: 0 0 2px #100f2e, 0 0 10px #ff79c6;',
-	'#50fa7b': 'color: #50fa7b; text-shadow: 0 0 2px #100f2e, 0 0 10px #25a243;',
-	'#ff5555': 'color: #ff5555; text-shadow: 0 0 2px #100f2e, 0 0 10px #ff5555;',
-	'#f1fa8c': 'color: #f1fa8c; text-shadow: 0 0 2px #100f2e, 0 0 10px #f1fa8c;',
-	'#ffb86c': 'color: #ffb86c; text-shadow: 0 0 2px #100f2e, 0 0 10px #ffb86c;',
+	'#bd93f9': 'color: #bd93f9; text-shadow: 0 0 2px #bd93f9[ALPHA], 0 0 10px #6231a7[ALPHA];',
+	'#8be9fd': 'color: #8be9fd; text-shadow: 0 0 2px #100f2e[ALPHA], 0 0 8px #8be9fd[ALPHA];',
+	'#ff79c6': 'color: #ff79c6; text-shadow: 0 0 2px #100f2e[ALPHA], 0 0 10px #ff79c6[ALPHA];',
+	'#50fa7b': 'color: #50fa7b; text-shadow: 0 0 2px #100f2e[ALPHA], 0 0 10px #25a243[ALPHA];',
+	'#ff5555': 'color: #ff5555; text-shadow: 0 0 2px #100f2e[ALPHA], 0 0 10px #ff5555[ALPHA];',
+	'#f1fa8c': 'color: #f1fa8c; text-shadow: 0 0 2px #100f2e[ALPHA], 0 0 10px #f1fa8c[ALPHA];',
+	'#ffb86c': 'color: #ffb86c; text-shadow: 0 0 2px #100f2e[ALPHA], 0 0 10px #ffb86c[ALPHA];',
 };
 
 const NEOMONO_DEEP_GLOW_MAP: GlowMap = {
-	'#a576e0': 'color: #a576e0; text-shadow: 0 0 2px #a576e0, 0 0 10px #5a2d8f;',
-	'#6dd0e8': 'color: #6dd0e8; text-shadow: 0 0 2px #0a1920, 0 0 8px #6dd0e8;',
-	'#e85aa8': 'color: #e85aa8; text-shadow: 0 0 2px #0a1920, 0 0 10px #e85aa8;',
-	'#3dd660': 'color: #3dd660; text-shadow: 0 0 2px #0a1920, 0 0 10px #1a8030;',
-	'#e04040': 'color: #e04040; text-shadow: 0 0 2px #0a1920, 0 0 10px #e04040;',
-	'#d8e070': 'color: #d8e070; text-shadow: 0 0 2px #0a1920, 0 0 10px #d8e070;',
-	'#e8a070': 'color: #e8a070; text-shadow: 0 0 2px #0a1920, 0 0 10px #e8a070;',
+	'#a576e0': 'color: #a576e0; text-shadow: 0 0 2px #a576e0[ALPHA], 0 0 10px #5a2d8f[ALPHA];',
+	'#6dd0e8': 'color: #6dd0e8; text-shadow: 0 0 2px #0a1920[ALPHA], 0 0 8px #6dd0e8[ALPHA];',
+	'#e85aa8': 'color: #e85aa8; text-shadow: 0 0 2px #0a1920[ALPHA], 0 0 10px #e85aa8[ALPHA];',
+	'#3dd660': 'color: #3dd660; text-shadow: 0 0 2px #0a1920[ALPHA], 0 0 10px #1a8030[ALPHA];',
+	'#e04040': 'color: #e04040; text-shadow: 0 0 2px #0a1920[ALPHA], 0 0 10px #e04040[ALPHA];',
+	'#d8e070': 'color: #d8e070; text-shadow: 0 0 2px #0a1920[ALPHA], 0 0 10px #d8e070[ALPHA];',
+	'#e8a070': 'color: #e8a070; text-shadow: 0 0 2px #0a1920[ALPHA], 0 0 10px #e8a070[ALPHA];',
 };
 
 // Combined map for both themes — we detect which one is active at runtime
@@ -174,87 +177,104 @@ function escapeForJsString(str: string): string {
 	return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
 }
 
-function generateGlowJs(disableGlow: boolean): string {
-	// Build the token replacement map as a JS object literal
+function generateGlowJs(disableGlow: boolean, brightness: number): string {
+	// Clamp and convert brightness (0-1) to 2-digit hex alpha (00-FF)
+	const clamped = Math.max(0, Math.min(1, brightness));
+	const alphaHex = Math.floor(clamped * 255).toString(16).toUpperCase().padStart(2, '0');
+
+	// Build the token replacement map as a JS object literal,
+	// substituting [ALPHA] with the computed hex value.
 	const mapEntries = Object.entries(ALL_GLOW_REPLACEMENTS)
 		.map(([color, replacement]) => {
-			return `\t\t'${color}': '${escapeForJsString(replacement)}'`;
+			const withAlpha = replacement.replace(/\[ALPHA\]/g, alphaHex);
+			return '\t\t\'' + color + '\': \'' + escapeForJsString(withAlpha) + '\'';
 		})
 		.join(',\n');
 
-	return `(function() {
-	'use strict';
+	const js = [
+		'(function() {',
+		'\t\'use strict\';',
+		'',
+		'\tconst TOKEN_REPLACEMENTS = {',
+		mapEntries,
+		'\t};',
+		'',
+		"\tconst THEME_NAMES = ['Neomono', 'Neomono Deep'];",
+		'\tconst DISABLE_GLOW = ' + disableGlow + ';',
+		'',
+		'\tfunction isNeomonoTheme() {',
+		'\t\tconst htmlTheme = document.documentElement.getAttribute(\'data-vscode-theme-name\');',
+		'\t\tconst bodyTheme = document.body.getAttribute(\'data-vscode-theme-name\');',
+		'\t\treturn THEME_NAMES.includes(htmlTheme) || THEME_NAMES.includes(bodyTheme);',
+		'\t}',
+		'',
+		'\tfunction hasNeomonoColors(styles) {',
+		'\t\treturn Object.keys(TOKEN_REPLACEMENTS).some(function(color) {',
+		'\t\t\treturn styles.includes(color);',
+		'\t\t});',
+		'\t}',
+		'',
+		'\tfunction replaceTokens(styles) {',
+		'\t\treturn Object.keys(TOKEN_REPLACEMENTS).reduce(function(acc, color) {',
+		'\t\t\tconst re = new RegExp(\'color: \' + color + \';\', \'gi\');',
+		'\t\t\treturn acc.replace(re, TOKEN_REPLACEMENTS[color]);',
+		'\t\t}, styles);',
+		'\t}',
+		'',
+		'\tfunction initGlow() {',
+		'\t\tif (document.getElementById(\'neomono-glow-styles\')) {',
+		'\t\t\treturn true;',
+		'\t\t}',
+		'',
+		'\t\tconst tokensEl = document.querySelector(\'.vscode-tokens-styles\');',
+		'\t\tif (!tokensEl) {',
+		'\t\t\treturn false;',
+		'\t\t}',
+		'',
+		'\t\tif (!isNeomonoTheme()) {',
+		'\t\t\treturn false;',
+		'\t\t}',
+		'',
+		'\t\tif (!hasNeomonoColors(tokensEl.innerText)) {',
+		'\t\t\treturn false;',
+		'\t\t}',
+		'',
+		'\t\tconst originalStyles = tokensEl.innerText;',
+		'\t\tconst updatedStyles = DISABLE_GLOW',
+		'\t\t\t? originalStyles',
+		'\t\t\t: replaceTokens(originalStyles);',
+		'',
+		'\t\tconst newStyleTag = document.createElement(\'style\');',
+		'\t\tnewStyleTag.id = \'neomono-glow-styles\';',
+		'\t\tnewStyleTag.textContent = updatedStyles.replace(/(\\r\\n|\\n|\\r)/gm, \'\');',
+		'\t\tdocument.body.appendChild(newStyleTag);',
+		'',
+		'\t\treturn true;',
+		'\t}',
+		'',
+		'\t// Try immediately',
+		'\tinitGlow();',
+		'',
+		'\t// Watch for DOM changes',
+		'\tconst observer = new MutationObserver(function() {',
+		'\t\tif (initGlow()) {',
+		'\t\t\tobserver.disconnect();',
+		'\t\t}',
+		'\t});',
+		'\tobserver.observe(document.body, { childList: true, subtree: true });',
+		'',
+		'\t// Polling fallback',
+		'\tlet attempts = 0;',
+		'\tconst poll = setInterval(function() {',
+		'\t\tattempts++;',
+		'\t\tif (initGlow() || attempts > 60) {',
+		'\t\t\tclearInterval(poll);',
+		'\t\t}',
+		'\t}, 500);',
+		'})();'
+	];
 
-	const TOKEN_REPLACEMENTS = {
-${mapEntries}
-	};
-
-	const THEME_NAMES = ['Neomono', 'Neomono Deep'];
-	const DISABLE_GLOW = ${disableGlow};
-
-	function isNeomonoTheme() {
-		const htmlTheme = document.documentElement.getAttribute('data-vscode-theme-name');
-		const bodyTheme = document.body.getAttribute('data-vscode-theme-name');
-		return THEME_NAMES.includes(htmlTheme) || THEME_NAMES.includes(bodyTheme);
-	}
-
-	function hasNeomonoColors(styles) {
-		return Object.keys(TOKEN_REPLACEMENTS).some(function(color) {
-			return styles.includes(color);
-		});
-	}
-
-	function replaceTokens(styles) {
-		return Object.keys(TOKEN_REPLACEMENTS).reduce(function(acc, color) {
-			const re = new RegExp('color: ' + color + ';', 'gi');
-			return acc.replace(re, TOKEN_REPLACEMENTS[color]);
-		}, styles);
-	}
-
-	function initGlow(observer) {
-		const tokensEl = document.querySelector('.vscode-tokens-styles');
-		if (!tokensEl) {
-			return;
-		}
-
-		if (!isNeomonoTheme()) {
-			return;
-		}
-
-		if (!hasNeomonoColors(tokensEl.innerText)) {
-			return;
-		}
-
-		if (document.getElementById('neomono-glow-styles')) {
-			return;
-		}
-
-		const originalStyles = tokensEl.innerText;
-		const updatedStyles = DISABLE_GLOW
-			? originalStyles
-			: replaceTokens(originalStyles);
-
-		const newStyleTag = document.createElement('style');
-		newStyleTag.id = 'neomono-glow-styles';
-		newStyleTag.textContent = updatedStyles.replace(/(\r\n|\n|\r)/gm, '');
-		document.body.appendChild(newStyleTag);
-
-		if (observer) {
-			observer.disconnect();
-		}
-	}
-
-	const observer = new MutationObserver(function(mutationsList, observer) {
-		for (let i = 0; i < mutationsList.length; i++) {
-			const mutation = mutationsList[i];
-			if (mutation.type === 'attributes' || mutation.type === 'childList') {
-				initGlow(observer);
-			}
-		}
-	});
-
-	observer.observe(document.body, { attributes: true, childList: true });
-})();`;
+	return js.join('\n');
 }
 
 // ── Patching ───────────────────────────────────────────────────────────────
@@ -273,11 +293,13 @@ export async function enableGlow(): Promise<void> {
 	}
 
 	const { htmlFile, jsFile } = paths;
-	const disableGlow = !getConfig().glow;
+	const config = getConfig();
+	const disableGlow = !config.glow;
+	const brightness = config.brightness;
 
 	try {
 		// Generate the glow JS
-		const jsContent = generateGlowJs(disableGlow);
+		const jsContent = generateGlowJs(disableGlow, brightness);
 		fs.writeFileSync(jsFile, jsContent, 'utf-8');
 
 		// Patch workbench.html
