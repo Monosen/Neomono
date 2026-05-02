@@ -43,11 +43,6 @@
   ],
   "main": "./out/extension.js",
   "l10n": "./l10n",
-  "activationEvents": [
-    "onCommand:neomono.enableNeonDreams",
-    "onCommand:neomono.disableNeonDreams",
-    "onCommand:neomono.toggleNeonDreams"
-  ],
   "contributes": {
     "themes": [
       {
