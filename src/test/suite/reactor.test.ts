@@ -1,21 +1,6 @@
 import * as assert from 'assert';
-import * as path from 'path';
-import * as fs from 'fs';
 import * as vscode from 'vscode';
-
-function findProjectRoot(startDir: string): string {
-	let current = startDir;
-	while (current !== path.dirname(current)) {
-		if (fs.existsSync(path.join(current, 'package.json'))) {
-			return current;
-		}
-		current = path.dirname(current);
-	}
-	throw new Error('Could not find project root');
-}
-
-const PROJECT_ROOT = findProjectRoot(__dirname);
-const reactor = require(path.join(PROJECT_ROOT, 'out', 'reactor')) as typeof import('../../reactor');
+import * as reactor from '../../reactor';
 
 suite('Reactor Module Tests', () => {
 	test('should export activateReactor function', () => {
@@ -73,7 +58,7 @@ suite('Reactor State Resolution', () => {
 });
 
 suite('Reactor Color Customizations', () => {
-	const enabledConfig: import('../../reactor').ReactorConfig = {
+	const enabledConfig: reactor.ReactorConfig = {
 		enabled: true,
 		intensity: 'moderate',
 		affectedElements: {
@@ -146,6 +131,42 @@ suite('Reactor Color Customizations', () => {
 		assert.strictEqual((merged['[Neomono]'] as Record<string, string>)['statusBar.background'], undefined);
 		assert.strictEqual((merged['[Neomono]'] as Record<string, string>)['editorCursor.foreground'], '#123456');
 		assert.strictEqual(merged['[Neomono Deep]'], undefined);
+	});
+
+	test('computeResetCustomizations strips managed keys from scoped maps', () => {
+		const next = reactor.computeResetCustomizations({
+			'editor.background': '#000000',
+			'[Neomono]': {
+				'statusBar.background': '#ff5555',
+				'editorCursor.foreground': '#ffffff'
+			},
+			'[Neomono Deep]': {
+				'statusBar.background': '#e04040'
+			}
+		});
+
+		assert.strictEqual(next['editor.background'], '#000000', 'unrelated keys preserved');
+		assert.strictEqual(
+			(next['[Neomono]'] as Record<string, string>)['statusBar.background'],
+			undefined,
+			'managed key removed from scoped map'
+		);
+		assert.strictEqual(
+			(next['[Neomono]'] as Record<string, string>)['editorCursor.foreground'],
+			'#ffffff',
+			'unrelated scoped key preserved'
+		);
+		assert.strictEqual(next['[Neomono Deep]'], undefined,
+			'now-empty scoped map removed entirely');
+	});
+
+	test('computeResetCustomizations is a no-op on customizations without Reactor keys', () => {
+		const input = {
+			'editor.background': '#1e1e1e',
+			'[Default Dark+]': { 'statusBar.background': '#222222' }
+		};
+		const next = reactor.computeResetCustomizations(input);
+		assert.deepStrictEqual(next, input);
 	});
 
 	test('adds editor background tint only when enabled', () => {

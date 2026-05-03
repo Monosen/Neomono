@@ -1,0 +1,23 @@
+{
+  "//": "Coverage config for c8. Captures V8 coverage from any descendant Node process (including Electron's extension host) that honours NODE_V8_COVERAGE.",
+  "all": true,
+  "src": ["src"],
+  "include": ["out/**/*.js"],
+  "exclude": [
+    "out/test/**",
+    "out/templates/**",
+    "**/*.test.js",
+    "**/_helpers.js",
+    "scripts/**",
+    "coverage/**",
+    "node_modules/**",
+    "**/*.d.ts"
+  ],
+  "exclude-after-remap": true,
+  "reporter": ["text", "text-summary", "lcov", "html"],
+  "reports-dir": "coverage",
+  "temp-directory": "coverage/tmp",
+  "clean": true,
+  "skip-full": false,
+  "check-coverage": false
+}
