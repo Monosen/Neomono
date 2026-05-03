@@ -7,6 +7,7 @@ on:
 
 env:
   NODE_VERSION: 20
+  PNPM_VERSION: 9
 
 jobs:
   validate:
@@ -15,32 +16,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
-      - name: Run linter
-        run: npm run lint
-
-      - name: Validate theme JSON and colors
-        run: npm run validate:theme
+      - name: Validate (lint + typecheck + theme + i18n + commands)
+        run: pnpm run validate
 
       - name: Verify tag matches package version
         run: |
           TAG=${GITHUB_REF#refs/tags/v}
           VERSION=$(node -p "require('./package.json').version")
           if [ "$TAG" != "$VERSION" ]; then
-            echo "❌ Tag version ($TAG) does not match package.json version ($VERSION)"
+            echo "Tag version ($TAG) does not match package.json version ($VERSION)"
             exit 1
           fi
-          echo "✅ Tag version matches package.json: $VERSION"
+          echo "Tag version matches package.json: $VERSION"
 
       - name: Package extension
-        run: npx --yes @vscode/vsce package -o neomono.vsix
+        # vscode:prepublish runs validate + build (esbuild bundle) automatically.
+        # --no-dependencies: bundle already contains everything; skip vsce's npm probe.
+        run: pnpm exec vsce package --no-dependencies -o neomono.vsix
+
+      - name: Report VSIX size
+        run: ls -lh neomono.vsix
 
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
@@ -56,10 +65,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
 
       - name: Download VSIX artifact
         uses: actions/download-artifact@v4
@@ -70,7 +85,7 @@ jobs:
         if: env.VSCE_PAT != ''
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        run: npx --yes @vscode/vsce publish --packagePath neomono.vsix
+        run: pnpm dlx @vscode/vsce publish --packagePath neomono.vsix
 
   publish-openvsx:
     name: Publish to Open VSX
@@ -81,10 +96,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
 
       - name: Download VSIX artifact
         uses: actions/download-artifact@v4
@@ -95,7 +116,7 @@ jobs:
         if: env.OVSX_PAT != ''
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
-        run: npx --yes ovsx publish neomono.vsix -p "$OVSX_PAT"
+        run: pnpm dlx ovsx publish neomono.vsix -p "$OVSX_PAT"
 
   release:
     name: Create GitHub Release
@@ -111,15 +132,28 @@ jobs:
         with:
           name: neomono-vsix
 
+      - name: Extract release notes from CHANGELOG
+        id: notes
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          {
+            echo "body<<RELEASE_NOTES_EOF"
+            node scripts/extract-changelog.js "$VERSION" || node scripts/extract-changelog.js Unreleased
+            echo "RELEASE_NOTES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: neomono.vsix
+          body: ${{ steps.notes.outputs.body }}
+          # generate_release_notes still appends commit-based notes underneath
+          # the curated CHANGELOG body, which is useful for full traceability.
           generate_release_notes: true
 
       - name: Report publication status
         run: |
-          echo "📦 Release completed"
+          echo "Release completed"
           echo ""
           echo "Marketplace status:"
           echo "  VS Code Marketplace: ${{ needs.publish-vscode.result }}"

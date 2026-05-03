@@ -7,40 +7,148 @@ on:
     branches: [master, main]
 
 jobs:
-  validate:
-    name: Validate theme and package
-    runs-on: ubuntu-latest
+  test:
+    name: Test (${{ matrix.os }} · Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Full Node matrix on Linux; smoke-check only on Windows/macOS to
+        # catch path/EOL/permission issues without exploding CI minutes.
+        include:
+          - { os: ubuntu-latest, node: 18, xvfb: true }
+          - { os: ubuntu-latest, node: 20, xvfb: true }
+          - { os: ubuntu-latest, node: 22, xvfb: true }
+          - { os: windows-latest, node: 20, xvfb: false }
+          - { os: macos-latest, node: 20, xvfb: false }
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run linter
+        run: pnpm run lint
+
+      - name: Type-check
+        run: pnpm run typecheck
+
+      - name: Run tests (Linux, headless via xvfb)
+        if: matrix.xvfb
+        run: xvfb-run -a pnpm test
+
+      - name: Run tests (Windows / macOS)
+        if: '!matrix.xvfb'
+        run: pnpm test
+
+  validate:
+    name: Validate theme, i18n and commands
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
-
-      - name: Run linter
-        run: npm run lint
-
-      - name: Compile TypeScript
-        run: npx tsc --noEmit
-
-      - name: Run tests
-        run: npm test
+        run: pnpm install --frozen-lockfile
 
       - name: Validate theme JSON and colors
-        run: npm run validate:theme
+        run: pnpm run validate:theme
 
       - name: Validate commands registered
-        run: node scripts/validate-commands.js
+        run: pnpm run validate:commands
 
       - name: Validate i18n synchronization
-        run: node scripts/validate-i18n.js
+        run: pnpm run validate:i18n
+
+  coverage:
+    name: Tests with coverage
+    runs-on: ubuntu-latest
+    needs: test
+    # Coverage is informational for now: it should not block the merge if
+    # Electron's renderer fails to emit V8 coverage on a particular run.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests with coverage
+        run: xvfb-run -a pnpm run test:coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-html
+          path: coverage/
+          retention-days: 14
+
+  package:
+    name: Package extension
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Bundle extension with esbuild
+        run: pnpm run build
 
       - name: Package extension
-        run: npx --yes @vscode/vsce package --no-git-tag-version --no-update-package-json -o neomono.vsix
+        # --no-dependencies: with esbuild bundling everything runtime-needed
+        # is already inside out/extension.js, so we don't ship node_modules/.
+        # This also avoids vsce trying to call `npm ls` on a pnpm-managed repo.
+        run: pnpm exec vsce package --no-dependencies --no-git-tag-version --no-update-package-json -o neomono.vsix
+
+      - name: Report VSIX size
+        run: ls -lh neomono.vsix
 
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
