@@ -77,7 +77,7 @@ jobs:
           cache: pnpm
 
       - name: Download VSIX artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: neomono-vsix
 
@@ -108,7 +108,7 @@ jobs:
           cache: pnpm
 
       - name: Download VSIX artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: neomono-vsix
 
@@ -128,7 +128,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download VSIX artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: neomono-vsix
 
