@@ -1,9 +1,13 @@
 /*
- * Neomono Glow Effect
+ * Neomono Glow Effect — LEGACY (migration only)
  *
- * Scoped specifically to the "Neomono" theme.
- * Each theme variant has its own glow CSS file to ensure the glow colors
- * match the active theme palette.
+ * Since v0.0.8 the glow effect is injected via JavaScript directly into
+ * VS Code's workbench.html (see src/glow.ts). This CSS file is kept ONLY so
+ * that cleanupCustomCssImports() can locate and remove its URI from old
+ * `vscode_custom_css.imports` entries left over from the previous Custom CSS
+ * Loader integration.
+ *
+ * Do not edit colors here — edit NEOMONO_GLOW_MAP in src/glow.ts instead.
  */
 
 :root[data-vscode-theme-name="Neomono"] .monaco-workbench .mtk3,
