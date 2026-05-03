@@ -13,7 +13,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const TARGETS = ['vscode', 'ovsx'];
+const TARGETS = ['vscode', 'ovsx', 'both'];
 const target = process.argv[2];
 
 if (!TARGETS.includes(target)) {
@@ -47,6 +47,24 @@ const badges = {
     </a>
     <a href="https://github.com/Monosen/Neomono">
       <img src="https://img.shields.io/github/stars/Monosen/Neomono?style=for-the-badge&color=C3E88D&logo=github" alt="Stars" />
+    </a>
+    <a href="https://github.com/Monosen/Neomono/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/Monosen/Neomono?style=for-the-badge&color=f07178&logo=github" alt="License" />
+    </a>
+  </p>`,
+    both: `
+  <p>
+    <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
+      <img src="https://img.shields.io/visual-studio-marketplace/v/Monosen.neomono?style=for-the-badge&color=C792EA&logo=visual-studio-code&label=VS%20Code" alt="VS Code Marketplace Version" />
+    </a>
+    <a href="https://open-vsx.org/extension/Monosen/neomono">
+      <img src="https://img.shields.io/open-vsx/v/Monosen/neomono?style=for-the-badge&color=C792EA&logo=eclipseide&label=Open%20VSX" alt="Open VSX Version" />
+    </a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
+      <img src="https://img.shields.io/visual-studio-marketplace/d/Monosen.neomono?style=for-the-badge&color=89DDFF&logo=visual-studio-code" alt="Downloads" />
+    </a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
+      <img src="https://img.shields.io/visual-studio-marketplace/r/Monosen.neomono?style=for-the-badge&color=C3E88D&logo=visual-studio-code" alt="Rating" />
     </a>
     <a href="https://github.com/Monosen/Neomono/blob/master/LICENSE">
       <img src="https://img.shields.io/github/license/Monosen/Neomono?style=for-the-badge&color=f07178&logo=github" alt="License" />

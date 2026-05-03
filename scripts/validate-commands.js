@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
  * Validate that every command declared in package.json contributes.commands
- * is registered in src/extension.js.
+ * is registered in src/extension.ts.
  */
 
 const fs = require('node:fs');
 const path = require('node:path');
 
 const PKG_PATH = path.join(__dirname, '..', 'package.json');
-const EXT_PATH = path.join(__dirname, '..', 'src', 'extension.js');
+const EXT_PATH = path.join(__dirname, '..', 'src', 'extension.ts');
 
 function fail(message) {
     console.error(`✗ ${message}`);
@@ -26,7 +26,7 @@ function main() {
     }
 
     if (!fs.existsSync(EXT_PATH)) {
-        fail(`extension.js not found at ${EXT_PATH}`);
+        fail(`extension.ts not found at ${EXT_PATH}`);
         return;
     }
 
@@ -64,9 +64,9 @@ function main() {
     }
 
     if (missing.length > 0) {
-        fail(`Commands declared but not registered in extension.js: ${missing.join(', ')}`);
+        fail(`Commands declared but not registered in extension.ts: ${missing.join(', ')}`);
     } else {
-        ok(`All ${declaredCommands.length} declared commands are registered in extension.js`);
+        ok(`All ${declaredCommands.length} declared commands are registered in extension.ts`);
     }
 }
 

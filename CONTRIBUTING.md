@@ -4,10 +4,13 @@ Thanks for your interest in improving Neomono! This guide covers the minimum you
 
 ## Development
 
+This project uses **pnpm** as its package manager (see `packageManager` in `package.json`).
+If you don't have it installed: `npm install -g pnpm` or `corepack enable`.
+
 ```bash
 git clone https://github.com/Monosen/Neomono.git
 cd Neomono
-npm install
+pnpm install
 ```
 
 ### Run the extension locally
@@ -17,19 +20,76 @@ npm install
 3. Pick the theme: `Ctrl+K Ctrl+T` → **Neomono**.
 4. Run `Developer: Inspect Editor Tokens and Scopes` to see how scopes map to colors.
 
-### Validate the theme
+### Validate everything
 
 ```bash
-npm run validate:theme
+pnpm run validate
 ```
 
-This checks that the theme parses as JSON, has no duplicate keys, and every color is a valid hex value.
+This runs the linter, theme validation (JSON / duplicate keys / hex colors),
+i18n synchronization checks and command registration checks.
+
+Individual scripts:
+
+```bash
+pnpm run lint
+pnpm run validate:theme
+pnpm run validate:i18n
+pnpm run validate:commands
+pnpm run validate:tokencolors
+```
+
+### Updating tokenColors
+
+`tokenColors` are snapshot-tested under `themes/__snapshots__/`. If you
+intentionally change a `scope`, `foreground`, or `fontStyle` in either theme,
+update the snapshot:
+
+```bash
+pnpm run snapshot:tokencolors:update
+```
+
+Then commit the regenerated `.snap.json` files alongside the theme change.
+
+If you ever want to add proper tokenization tests against a real grammar
+(TypeScript, Python, ...), `vscode-tmgrammar-test` is already installed; place
+fixtures under `tests/grammar/` and call `pnpm exec vscode-tmgrammar-test`.
+
+### Run tests
+
+```bash
+pnpm test
+```
+
+Tests are precompiled with `tsc` automatically via the `pretest` script (so each
+test file becomes its own `out/test/**/*.js`, which is what `vscode-test` expects).
+
+### Build / bundle
+
+The production bundle is produced by **esbuild** (single minified `out/extension.js`):
+
+```bash
+pnpm run build         # production bundle
+pnpm run build:dev     # sourcemaps, no minify
+pnpm run watch         # rebuild on change
+pnpm run typecheck     # tsc --noEmit (no output, just types)
+```
 
 ### Package a `.vsix`
 
 ```bash
-npm run package
+pnpm run package
 ```
+
+`vsce package` triggers `vscode:prepublish` (validate + esbuild bundle) and
+runs with `--no-dependencies` because everything runtime-needed is already in
+the bundle.
+
+### Logs / debugging
+
+Open the **Output** panel in VS Code (`View → Output`) and select **Neomono** in
+the dropdown to see all `log.info` / `log.warn` / `log.error` from the extension.
+Attach this when reporting bugs.
 
 ## Commit messages
 
