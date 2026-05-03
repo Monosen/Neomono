@@ -6,11 +6,12 @@ PUBLISHING.md
 .DS_Store
 Thumbs.db
 coverage/
+coverage-final.json
+.nyc_output/
 .vscode-test/
 .atl/
 
 # Compiled output
 out/
-
-# Package manager
-pnpm-workspace.yaml
+*.tsbuildinfo
+*.map

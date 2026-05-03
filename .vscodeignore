@@ -2,6 +2,12 @@
 .vscode/**
 .vscode-test/**
 .github/**
+coverage/**
+.nyc_output/**
+.c8rc.json
+themes/__snapshots__/**
+tests/**
+IMPROVEMENTS.md
 .git/**
 .gitignore
 .gitattributes
@@ -17,6 +23,7 @@ README.es.md
 node_modules/**
 .pnpm-store/**
 .pnpm/**
+.npmrc
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
@@ -29,12 +36,10 @@ bun.lockb
 # TypeScript source and config
 src/**
 tsconfig.json
+**/*.tsbuildinfo
 
 # Test files in compiled output
 out/test/**
 
 # Test configuration
 .vscode-test.js
-
-# Package manager files
-pnpm-workspace.yaml
