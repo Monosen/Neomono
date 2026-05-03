@@ -15,5 +15,11 @@
   "reactor.enabled": "✨ Reactor Glow enabled! The UI will now react to errors, warnings, and debugging.",
   "reactor.disabled": "🌙 Reactor Glow disabled. The UI will return to its default colors.",
   "reactor.alreadyEnabled": "Reactor Glow is already enabled.",
-  "reactor.alreadyDisabled": "Reactor Glow is already disabled."
+  "reactor.alreadyDisabled": "Reactor Glow is already disabled.",
+  "reactor.customizationsReset": "Reactor Glow customizations have been removed from your settings.",
+  "reactor.customizationsResetError": "Could not remove Reactor Glow customizations: {0}",
+  "reactor.toggleError": "Could not toggle Reactor Glow: {0}",
+  "reactor.prompt.message": "Neomono includes Reactor Glow — a reactive UI that tints VS Code based on errors, warnings and debugging. Enable it now? You can change this later in settings.",
+  "reactor.prompt.enable": "Enable Reactor Glow",
+  "reactor.prompt.notNow": "Not now"
 }

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
+import { log } from './logger';
 
-export const SUPPORTED_THEME_NAMES = ['Neomono', 'Neomono Deep'] as const;
+export const SUPPORTED_THEME_NAMES = ['Neomono', 'Neomono Deep', 'Neomono HC'] as const;
 export type SupportedThemeName = (typeof SUPPORTED_THEME_NAMES)[number];
 export type ReactorState = 'normal' | 'error' | 'warning' | 'debug';
 export type ReactorIntensity = 'subtle' | 'moderate' | 'intense';
@@ -21,6 +22,9 @@ export interface ReactorConfig {
 
 const COLOR_CUSTOMIZATIONS_KEY = 'colorCustomizations';
 const DIAGNOSTIC_REFRESH_DELAY_MS = 150;
+// Hex alpha used by the "intense" intensity to tint backgrounds with the state
+// accent color (0x35 / 255 ≈ 21% opacity).
+const INTENSE_BACKGROUND_ALPHA = '35';
 
 export const MANAGED_COLOR_KEYS = [
 	'statusBar.background',
@@ -127,6 +131,37 @@ const THEME_PALETTES: Record<SupportedThemeName, ThemePalette> = {
 		warningDiagnosticsForeground: '#f3ba82',
 		debugToolbarBackground: '#2d3044',
 		debugToolbarBorder: '#6dd0e8'
+	},
+	'Neomono HC': {
+		// HC keeps everything pure black + saturated accents. We bias the
+		// state colors towards the brightest tone so contrast stays high
+		// even when Reactor tints panels.
+		statusBarForeground: '#000000',
+		baseStatusBarBackground: '#d4a8ff',
+		baseStatusBarBorder: '#ffffff',
+		baseActivityBarBackground: '#000000',
+		baseTitleBarBackground: '#000000',
+		basePanelTitleBorder: '#d4a8ff',
+		baseEditorErrorForeground: '#ff7878',
+		baseEditorWarningForeground: '#ffc88a',
+		baseTabActiveBorder: '#ffffff',
+		baseEditorBackground: '#000000',
+		error: '#ff7878',
+		warning: '#ffc88a',
+		debug: '#a8f2ff',
+		errorActivityBackground: '#ff787828',
+		warningActivityBackground: '#ffc88a28',
+		debugActivityBackground: '#a8f2ff28',
+		errorTitleBarBackground: '#ff78781f',
+		warningTitleBarBackground: '#ffc88a1f',
+		debugTitleBarBackground: '#a8f2ff1f',
+		errorEditorBackground: '#1a0808',
+		warningEditorBackground: '#1a1408',
+		debugEditorBackground: '#08141a',
+		errorDiagnosticsForeground: '#ff9090',
+		warningDiagnosticsForeground: '#ffd9a8',
+		debugToolbarBackground: '#1f1f1f',
+		debugToolbarBorder: '#a8f2ff'
 	}
 };
 
@@ -136,6 +171,9 @@ const INTENSITY_LEVELS: Record<ReactorIntensity, number> = {
 	intense: 2
 };
 
+// Module-level state. The extension lives in a single host process per VS Code
+// session, so this is effectively a singleton owned by activateReactor / deactivateReactor.
+// If you ever need multi-instance Reactors (e.g. per-window), wrap this in a class.
 let refreshTimer: NodeJS.Timeout | undefined;
 let lastAppliedSignature: string | undefined;
 
@@ -150,7 +188,9 @@ function isSupportedTheme(themeName: string): themeName is SupportedThemeName {
 export function getReactorConfig(): ReactorConfig {
 	const config = vscode.workspace.getConfiguration('neomono.reactor');
 	return {
-		enabled: config.get<boolean>('enabled', true),
+		// Opt-in by default: we don't want to write to the user's
+		// workbench.colorCustomizations on first install without consent.
+		enabled: config.get<boolean>('enabled', false),
 		intensity: config.get<ReactorIntensity>('intensity', 'moderate'),
 		affectedElements: {
 			statusBar: config.get<boolean>('affectStatusBar', true),
@@ -214,6 +254,52 @@ function withAlpha(hexColor: string, alpha: string): string {
 	return `${hexColor.slice(0, 7)}${alpha}`;
 }
 
+// Active state colors per state — used wherever we just need "the accent color for this state"
+function stateAccent(state: Exclude<ReactorState, 'normal'>, palette: ThemePalette): string {
+	switch (state) {
+		case 'debug':
+			return palette.debug;
+		case 'error':
+			return palette.error;
+		case 'warning':
+			return palette.warning;
+	}
+}
+
+// Soft semi-transparent background tint per state
+function stateActivityBackground(state: Exclude<ReactorState, 'normal'>, palette: ThemePalette): string {
+	switch (state) {
+		case 'debug':
+			return palette.debugActivityBackground;
+		case 'error':
+			return palette.errorActivityBackground;
+		case 'warning':
+			return palette.warningActivityBackground;
+	}
+}
+
+function stateTitleBarBackground(state: Exclude<ReactorState, 'normal'>, palette: ThemePalette): string {
+	switch (state) {
+		case 'debug':
+			return palette.debugTitleBarBackground;
+		case 'error':
+			return palette.errorTitleBarBackground;
+		case 'warning':
+			return palette.warningTitleBarBackground;
+	}
+}
+
+function stateEditorBackground(state: Exclude<ReactorState, 'normal'>, palette: ThemePalette): string {
+	switch (state) {
+		case 'debug':
+			return palette.debugEditorBackground;
+		case 'error':
+			return palette.errorEditorBackground;
+		case 'warning':
+			return palette.warningEditorBackground;
+	}
+}
+
 export function createManagedColorOverrides(
 	themeName: SupportedThemeName,
 	state: ReactorState,
@@ -224,10 +310,14 @@ export function createManagedColorOverrides(
 	}
 
 	const palette = THEME_PALETTES[themeName];
+	const accent = stateAccent(state, palette);
+	const activityBg = stateActivityBackground(state, palette);
+	const titleBarBg = stateTitleBarBackground(state, palette);
+	const editorBg = stateEditorBackground(state, palette);
+	const intenseActivityBackground = withAlpha(accent, INTENSE_BACKGROUND_ALPHA);
 	const overrides: Partial<Record<ManagedColorKey, string>> = {};
 
 	if (config.affectedElements.statusBar) {
-		const accent = state === 'debug' ? palette.debug : state === 'error' ? palette.error : palette.warning;
 		overrides['statusBar.background'] = accent;
 		overrides['statusBar.foreground'] = palette.statusBarForeground;
 		overrides['statusBar.border'] = accent;
@@ -238,103 +328,47 @@ export function createManagedColorOverrides(
 	}
 
 	if (config.affectedElements.activityBar) {
-		const intenseActivityBackground =
-			state === 'debug'
-				? withAlpha(palette.debug, '35')
-				: state === 'error'
-					? withAlpha(palette.error, '35')
-					: withAlpha(palette.warning, '35');
-		overrides['activityBar.background'] =
-			state === 'debug'
-				? pickByIntensity([
-					palette.baseActivityBarBackground,
-					palette.debugActivityBackground,
-					intenseActivityBackground
-				], config.intensity)
-				: state === 'error'
-					? pickByIntensity([
-						palette.baseActivityBarBackground,
-						palette.errorActivityBackground,
-						intenseActivityBackground
-					], config.intensity)
-					: pickByIntensity([
-						palette.baseActivityBarBackground,
-						palette.warningActivityBackground,
-						intenseActivityBackground
-					], config.intensity);
-		overrides['activityBar.border'] = state === 'debug' ? palette.debug : state === 'error' ? palette.error : palette.warning;
+		overrides['activityBar.background'] = pickByIntensity(
+			[palette.baseActivityBarBackground, activityBg, intenseActivityBackground],
+			config.intensity
+		);
+		overrides['activityBar.border'] = accent;
 	}
 
 	if (config.affectedElements.titleBar) {
-		const intenseTitleBarBackground =
-			state === 'debug'
-				? palette.debugActivityBackground
-				: state === 'error'
-					? palette.errorActivityBackground
-					: palette.warningActivityBackground;
-		overrides['titleBar.activeBackground'] =
-			state === 'debug'
-				? pickByIntensity([
-					palette.baseTitleBarBackground,
-					palette.debugTitleBarBackground,
-					intenseTitleBarBackground
-				], config.intensity)
-				: state === 'error'
-					? pickByIntensity([
-						palette.baseTitleBarBackground,
-						palette.errorTitleBarBackground,
-						intenseTitleBarBackground
-					], config.intensity)
-					: pickByIntensity([
-						palette.baseTitleBarBackground,
-						palette.warningTitleBarBackground,
-						intenseTitleBarBackground
-					], config.intensity);
+		overrides['titleBar.activeBackground'] = pickByIntensity(
+			[palette.baseTitleBarBackground, titleBarBg, activityBg],
+			config.intensity
+		);
 	}
 
 	if (config.affectedElements.panelTitle) {
-		overrides['panelTitle.activeBorder'] = state === 'debug' ? palette.debug : state === 'error' ? palette.error : palette.warning;
+		overrides['panelTitle.activeBorder'] = accent;
 	}
 
 	if (config.affectedElements.editorDiagnostics) {
 		if (state === 'error') {
-			overrides['editorError.foreground'] = pickByIntensity([
-				palette.baseEditorErrorForeground,
-				palette.errorDiagnosticsForeground,
-				palette.error
-			], config.intensity);
+			overrides['editorError.foreground'] = pickByIntensity(
+				[palette.baseEditorErrorForeground, palette.errorDiagnosticsForeground, palette.error],
+				config.intensity
+			);
 		} else if (state === 'warning') {
-			overrides['editorWarning.foreground'] = pickByIntensity([
-				palette.baseEditorWarningForeground,
-				palette.warningDiagnosticsForeground,
-				palette.warning
-			], config.intensity);
+			overrides['editorWarning.foreground'] = pickByIntensity(
+				[palette.baseEditorWarningForeground, palette.warningDiagnosticsForeground, palette.warning],
+				config.intensity
+			);
 		}
 	}
 
 	if (config.affectedElements.tabActiveBorder) {
-		overrides['tab.activeBorder'] = state === 'debug' ? palette.debug : state === 'error' ? palette.error : palette.warning;
+		overrides['tab.activeBorder'] = accent;
 	}
 
 	if (config.affectedElements.editorBackground) {
-		overrides['editor.background'] =
-			state === 'debug'
-				? pickByIntensity([
-					palette.baseEditorBackground,
-					palette.debugEditorBackground,
-					palette.debugActivityBackground
-				], config.intensity)
-				: state === 'error'
-					? pickByIntensity([
-						palette.baseEditorBackground,
-						palette.errorEditorBackground,
-						palette.errorActivityBackground
-					], config.intensity)
-					: pickByIntensity([
-						palette.baseEditorBackground,
-						palette.warningEditorBackground,
-						palette.warningActivityBackground
-					], config.intensity);
+		overrides['editor.background'] = pickByIntensity(
+			[palette.baseEditorBackground, editorBg, activityBg],
+			config.intensity
+		);
 	}
 
 	if (state === 'debug') {
@@ -380,8 +414,14 @@ async function updateColorCustomizations(state: ReactorState, config: ReactorCon
 		return;
 	}
 
-	lastAppliedSignature = nextSignature;
-	await workbenchConfig.update(COLOR_CUSTOMIZATIONS_KEY, next, vscode.ConfigurationTarget.Global);
+	try {
+		await workbenchConfig.update(COLOR_CUSTOMIZATIONS_KEY, next, vscode.ConfigurationTarget.Global);
+		lastAppliedSignature = nextSignature;
+	} catch (error) {
+		// If the write fails, don't cache the signature: we want the next refresh
+		// to retry instead of believing the broken state was applied.
+		log.error('Failed to update workbench.colorCustomizations', error);
+	}
 }
 
 async function refreshReactorState(): Promise<void> {
@@ -402,6 +442,11 @@ function scheduleRefresh(delay = DIAGNOSTIC_REFRESH_DELAY_MS): void {
 	}, delay);
 }
 
+/**
+ * Wire Reactor Glow into the host: subscribe to diagnostics, debug sessions,
+ * the active editor, theme changes and our own configuration so the workbench
+ * color customizations stay in sync with the current state.
+ */
 export function activateReactor(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(
 		vscode.languages.onDidChangeDiagnostics((event) => {
@@ -431,6 +476,10 @@ export function activateReactor(context: vscode.ExtensionContext): void {
 	scheduleRefresh(0);
 }
 
+/**
+ * Tear Reactor Glow down: cancel any pending refresh and clear the managed
+ * customizations from the user's settings (so the UI returns to base colors).
+ */
 export function deactivateReactor(): void {
 	if (refreshTimer) {
 		clearTimeout(refreshTimer);
@@ -441,48 +490,118 @@ export function deactivateReactor(): void {
 	void updateColorCustomizations('normal', { ...getReactorConfig(), enabled: false });
 }
 
+async function setReactorEnabled(value: boolean): Promise<boolean> {
+	const config = vscode.workspace.getConfiguration('neomono.reactor');
+	try {
+		await config.update('enabled', value, vscode.ConfigurationTarget.Global);
+		return true;
+	} catch (error) {
+		log.error(`Failed to set neomono.reactor.enabled = ${value}`, error);
+		vscode.window.showErrorMessage(
+			vscode.l10n.t('reactor.toggleError', error instanceof Error ? error.message : String(error))
+		);
+		return false;
+	}
+}
+
 /**
- * Enable Reactor Glow by setting the configuration option.
+ * Enable Reactor Glow by flipping the configuration option.
  */
 export async function enableReactor(): Promise<void> {
 	const config = vscode.workspace.getConfiguration('neomono.reactor');
-	const currentEnabled = config.get<boolean>('enabled', true);
+	const currentEnabled = config.get<boolean>('enabled', false);
 
 	if (currentEnabled) {
 		vscode.window.showInformationMessage(vscode.l10n.t('reactor.alreadyEnabled'));
 		return;
 	}
 
-	await config.update('enabled', true, vscode.ConfigurationTarget.Global);
-	vscode.window.showInformationMessage(vscode.l10n.t('reactor.enabled'));
+	if (await setReactorEnabled(true)) {
+		vscode.window.showInformationMessage(vscode.l10n.t('reactor.enabled'));
+	}
 }
 
 /**
- * Disable Reactor Glow by setting the configuration option and clearing overrides.
+ * Disable Reactor Glow by flipping the configuration option (overrides are cleared
+ * automatically by the next state refresh that follows the config change event).
  */
 export async function disableReactor(): Promise<void> {
 	const config = vscode.workspace.getConfiguration('neomono.reactor');
-	const currentEnabled = config.get<boolean>('enabled', true);
+	const currentEnabled = config.get<boolean>('enabled', false);
 
 	if (!currentEnabled) {
 		vscode.window.showInformationMessage(vscode.l10n.t('reactor.alreadyDisabled'));
 		return;
 	}
 
-	await config.update('enabled', false, vscode.ConfigurationTarget.Global);
-	vscode.window.showInformationMessage(vscode.l10n.t('reactor.disabled'));
+	if (await setReactorEnabled(false)) {
+		vscode.window.showInformationMessage(vscode.l10n.t('reactor.disabled'));
+	}
 }
 
 /**
- * Toggle Reactor Glow on/off.
+ * Toggle `neomono.reactor.enabled`. Internally delegates to {@link enableReactor}
+ * or {@link disableReactor} so the user gets the same notifications as a manual
+ * toggle.
  */
 export async function toggleReactor(): Promise<void> {
 	const config = vscode.workspace.getConfiguration('neomono.reactor');
-	const currentEnabled = config.get<boolean>('enabled', true);
+	const currentEnabled = config.get<boolean>('enabled', false);
 
 	if (currentEnabled) {
 		await disableReactor();
 	} else {
 		await enableReactor();
 	}
+}
+
+/**
+ * Pure helper: given the current `workbench.colorCustomizations` object, return a
+ * new object with every Reactor-managed key (and any now-empty scoped maps for
+ * Neomono / Neomono Deep) removed. Exported separately so it can be unit-tested
+ * without touching VS Code state.
+ */
+export function computeResetCustomizations(
+	existing: Record<string, unknown>
+): Record<string, unknown> {
+	const next = { ...existing };
+
+	for (const themeName of SUPPORTED_THEME_NAMES) {
+		const scopedKey = `[${themeName}]`;
+		const currentScoped = asObjectRecord(next[scopedKey]);
+		const cleanedScoped = stripManagedKeys(currentScoped);
+
+		if (Object.keys(cleanedScoped).length > 0) {
+			next[scopedKey] = cleanedScoped;
+		} else {
+			delete next[scopedKey];
+		}
+	}
+
+	return next;
+}
+
+/**
+ * Remove every Reactor-managed key from the user's `workbench.colorCustomizations`,
+ * including the per-theme scoped maps `[Neomono]` and `[Neomono Deep]`. Useful when
+ * uninstalling or when the user wants to start from a clean slate.
+ */
+export async function resetReactorCustomizations(): Promise<void> {
+	const workbenchConfig = vscode.workspace.getConfiguration('workbench');
+	const existing = asObjectRecord(workbenchConfig.get<Record<string, unknown>>(COLOR_CUSTOMIZATIONS_KEY, {}));
+	const next = computeResetCustomizations(existing);
+
+	lastAppliedSignature = undefined;
+
+	try {
+		await workbenchConfig.update(COLOR_CUSTOMIZATIONS_KEY, next, vscode.ConfigurationTarget.Global);
+	} catch (error) {
+		log.error('Failed to update workbench.colorCustomizations during reset', error);
+		vscode.window.showErrorMessage(
+			vscode.l10n.t('reactor.customizationsResetError', error instanceof Error ? error.message : String(error))
+		);
+		return;
+	}
+
+	vscode.window.showInformationMessage(vscode.l10n.t('reactor.customizationsReset'));
 }

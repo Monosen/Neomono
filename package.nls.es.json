@@ -6,6 +6,7 @@
   "command.enableReactorGlow.title": "Habilitar Reactor Glow",
   "command.disableReactorGlow.title": "Deshabilitar Reactor Glow",
   "command.toggleReactorGlow.title": "Alternar Reactor Glow",
+  "command.resetReactorCustomizations.title": "Restablecer personalizaciones de Reactor",
   "config.brightness.description": "Establece el brillo del efecto Neon Dreams (0.0 transparente, 1.0 brillo máximo).",
   "config.glow.description": "Habilita el efecto de brillo (text-shadow). Cuando está deshabilitado, solo se aplican las actualizaciones de chrome del editor.",
   "config.showNotifications.description": "Muestra notificaciones informativas cuando Neon Dreams cambia de estado.",
@@ -17,5 +18,15 @@
   "config.reactor.affectPanelTitle.description": "Permite que Reactor Glow recoloree el borde del título del panel activo.",
   "config.reactor.affectEditorDiagnostics.description": "Permite que Reactor Glow intensifique los colores de errores y advertencias del editor.",
   "config.reactor.affectEditorBackground.description": "Permite que Reactor Glow agregue un tinte sutil al fondo del editor según el estado.",
-  "config.reactor.affectTabBorder.description": "Permite que Reactor Glow recoloree el borde de la pestaña activa."
+  "config.reactor.affectTabBorder.description": "Permite que Reactor Glow recoloree el borde de la pestaña activa.",
+  "walkthrough.title": "Empezar con Neomono",
+  "walkthrough.description": "Elige el tema, activa el glow y enciende Reactor Glow en tres clics.",
+  "walkthrough.pickTheme.title": "Elige un tema Neomono",
+  "walkthrough.pickTheme.description": "Cambia a **Neomono** o **Neomono Deep** para ver la paleta en acción.\n[Abrir selector de tema](command:workbench.action.selectTheme)",
+  "walkthrough.enableGlow.title": "Activar Neon Dreams (opcional)",
+  "walkthrough.enableGlow.description": "Añade un text-shadow brillante a tus tokens. Parchea el `workbench.html` de VS Code y te pedirá recargar.\n[Activar Neon Dreams](command:neomono.enableNeonDreams)",
+  "walkthrough.enableReactor.title": "Activar Reactor Glow (opcional)",
+  "walkthrough.enableReactor.description": "Tiñe la interfaz según los errores, advertencias y estado de depuración del archivo activo. Solo modifica `workbench.colorCustomizations` cuando lo aceptas.\n[Activar Reactor Glow](command:neomono.enableReactorGlow)",
+  "walkthrough.openLogs.title": "Dónde encontrar los logs",
+  "walkthrough.openLogs.description": "Neomono escribe todo lo que hace en un canal de Output dedicado — útil para reportar bugs.\n[Abrir output de Neomono](command:workbench.action.output.show.Neomono)"
 }
