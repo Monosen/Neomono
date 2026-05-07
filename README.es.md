@@ -32,6 +32,12 @@
 
 ---
 
+## ✨ Vista previa
+
+| Neomono | Neomono Deep | Neomono HC |
+|:---:|:---:|:---:|
+| ![Neomono](assets/neomono-preview.png) | ![Neomono Deep](assets/neomono-deep-preview.png) | ![HC](assets/neomono-hc-preview.png) |
+
 ## 📦 Instalación y Uso
 
 1.  Instala **Neomono** desde el Marketplace de VS Code.

@@ -17,7 +17,7 @@
       <img src="https://img.shields.io/visual-studio-marketplace/d/Monosen.neomono?style=for-the-badge&color=89DDFF&logo=visual-studio-code" alt="Downloads" />
     </a>
     <a href="https://marketplace.visualstudio.com/items?itemName=Monosen.neomono">
-      <img src="https://img.shields.io/visual-studio-marketplace/r/Monosen.neomono?style=for-the-badge&color=C3E88D&logo=visual-studio-code" alt="Rating" />
+      <img src="https://img.shields.io/visual-studio-marketplace/r/Monosen.neomono?style=for-the-badge&color=C3E88D&logo=visual-studio-code" alt="Rating" />f
     </a>
     <a href="https://github.com/Monosen/Neomono/blob/master/LICENSE">
       <img src="https://img.shields.io/github/license/Monosen/Neomono?style=for-the-badge&color=f07178&logo=github" alt="License" />
@@ -31,6 +31,12 @@
 </div>
 
 ---
+
+## ✨ Preview
+
+| Neomono | Neomono Deep | Neomono HC |
+|:---:|:---:|:---:|
+| ![Neomono](assets/neomono-preview.png) | ![Neomono Deep](assets/neomono-deep-preview.png) | ![HC](assets/neomono-hc-preview.png) |
 
 ## 📦 Installation & Usage
 
