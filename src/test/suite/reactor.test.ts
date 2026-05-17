@@ -12,7 +12,7 @@ suite('Reactor Module Tests', () => {
 	});
 
 	test('should export supported theme names', () => {
-		assert.deepStrictEqual(reactor.SUPPORTED_THEME_NAMES, ['Neomono', 'Neomono Deep']);
+		assert.deepStrictEqual(reactor.SUPPORTED_THEME_NAMES, ['Neomono', 'Neomono Deep', 'Neomono HC']);
 	});
 
 	test('should export enableReactor function', () => {

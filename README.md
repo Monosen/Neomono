@@ -25,9 +25,6 @@
   </p>
   <!-- BADGES_END -->
 
-  <p>
-    <a href="README.md">English</a> • <a href="README.es.md">Español</a>
-  </p>
 </div>
 
 ---

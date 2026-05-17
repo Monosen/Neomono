@@ -49,6 +49,7 @@ suite('Logger', () => {
 	let lastChannel: FakeChannel | undefined;
 
 	setup(() => {
+		log.dispose();
 		createCalls = [];
 		lastChannel = undefined;
 

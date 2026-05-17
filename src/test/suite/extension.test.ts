@@ -24,15 +24,16 @@ suite('Extension Test Suite', () => {
         assert.ok(neomonoCommands.includes('neomono.resetReactorCustomizations'), 'resetReactorCustomizations command should be registered');
     });
 
-    test('Should contribute both themes', () => {
-        const extension = vscode.extensions.getExtension('Monosen.neomono');
-        const packageJSON = extension!.packageJSON;
-        
-        const themes = packageJSON.contributes.themes;
-        assert.strictEqual(themes.length, 2, 'Should have 2 themes');
-        
-        const themeLabels = themes.map((t: { label: string }) => t.label);
-        assert.ok(themeLabels.includes('Neomono'), 'Should include Neomono theme');
-        assert.ok(themeLabels.includes('Neomono Deep'), 'Should include Neomono Deep theme');
-    });
+	test('Should contribute both themes', () => {
+		const extension = vscode.extensions.getExtension('Monosen.neomono');
+		const packageJSON = extension!.packageJSON;
+		
+		const themes = packageJSON.contributes.themes;
+		assert.strictEqual(themes.length, 3, 'Should have 3 themes');
+		
+		const themeLabels = themes.map((t: { label: string }) => t.label);
+		assert.ok(themeLabels.includes('Neomono'), 'Should include Neomono theme');
+		assert.ok(themeLabels.includes('Neomono Deep'), 'Should include Neomono Deep theme');
+		assert.ok(themeLabels.includes('Neomono HC'), 'Should include Neomono HC theme');
+	});
 });
