@@ -1,6 +1,8 @@
 .atl/**
+.claude/**
 .vscode/**
 .github/**
+out/**
 themes/__snapshots__/**
 .git/**
 .gitignore
