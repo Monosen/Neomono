@@ -1,44 +1,15 @@
 .atl/**
 .vscode/**
-.vscode-test/**
 .github/**
-coverage/**
-.nyc_output/**
-.c8rc.json
 themes/__snapshots__/**
-tests/**
-IMPROVEMENTS.md
 .git/**
 .gitignore
 .gitattributes
-.eslintrc*
-.eslintignore
-.prettierrc*
-eslint.config.js
-vsc-extension-quickstart.md
 CONTRIBUTING.md
-examples/**
 scripts/**
 node_modules/**
 .pnpm-store/**
-.pnpm/**
 .npmrc
 pnpm-lock.yaml
-package-lock.json
-yarn.lock
-bun.lockb
-**/*.map
-**/*.vsix
 **/.DS_Store
 **/Thumbs.db
-
-# TypeScript source and config
-src/**
-tsconfig.json
-**/*.tsbuildinfo
-
-# Test files in compiled output
-out/test/**
-
-# Test configuration
-.vscode-test.js

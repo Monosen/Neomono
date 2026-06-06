@@ -1,7 +1,7 @@
 {
   "name": "neomono",
   "displayName": "Neomono",
-  "description": "%extension.description%",
+  "description": "A dark neon cyberpunk color theme for VS Code",
   "version": "0.0.8",
   "publisher": "Monosen",
   "license": "MIT",
@@ -35,21 +35,10 @@
     "url": "https://github.com/Monosen/Neomono.git"
   },
   "engines": {
-    "vscode": "^1.85.0",
-    "node": ">=18"
+    "vscode": "^1.85.0"
   },
   "categories": [
-    "Themes",
-    "Visualization"
-  ],
-  "extensionKind": [
-    "ui",
-    "workspace"
-  ],
-  "main": "./out/extension.js",
-  "l10n": "./l10n",
-  "activationEvents": [
-    "onStartupFinished"
+    "Themes"
   ],
   "contributes": {
     "themes": [
@@ -68,222 +57,25 @@
         "uiTheme": "hc-black",
         "path": "./themes/Neomono-HC-color-theme.json"
       }
-    ],
-    "commands": [
-      {
-        "command": "neomono.enableNeonDreams",
-        "title": "%command.enableNeonDreams.title%",
-        "category": "Neomono"
-      },
-      {
-        "command": "neomono.disableNeonDreams",
-        "title": "%command.disableNeonDreams.title%",
-        "category": "Neomono"
-      },
-      {
-        "command": "neomono.toggleNeonDreams",
-        "title": "%command.toggleNeonDreams.title%",
-        "category": "Neomono"
-      },
-      {
-        "command": "neomono.enableReactorGlow",
-        "title": "%command.enableReactorGlow.title%",
-        "category": "Neomono"
-      },
-      {
-        "command": "neomono.disableReactorGlow",
-        "title": "%command.disableReactorGlow.title%",
-        "category": "Neomono"
-      },
-      {
-        "command": "neomono.toggleReactorGlow",
-        "title": "%command.toggleReactorGlow.title%",
-        "category": "Neomono"
-      },
-      {
-        "command": "neomono.resetReactorCustomizations",
-        "title": "%command.resetReactorCustomizations.title%",
-        "category": "Neomono"
-      }
-    ],
-    "configuration": {
-      "title": "Neomono",
-      "properties": {
-        "neomono.neonDreams.brightness": {
-          "type": "number",
-          "default": 0.45,
-          "minimum": 0,
-          "maximum": 1,
-          "description": "%config.brightness.description%"
-        },
-        "neomono.neonDreams.glow": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.glow.description%"
-        },
-        "neomono.neonDreams.showNotifications": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.showNotifications.description%"
-        },
-        "neomono.reactor.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "%config.reactor.enabled.description%"
-        },
-        "neomono.reactor.intensity": {
-          "type": "string",
-          "enum": [
-            "subtle",
-            "moderate",
-            "intense"
-          ],
-          "default": "moderate",
-          "description": "%config.reactor.intensity.description%"
-        },
-        "neomono.reactor.affectStatusBar": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.reactor.affectStatusBar.description%"
-        },
-        "neomono.reactor.affectActivityBar": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.reactor.affectActivityBar.description%"
-        },
-        "neomono.reactor.affectTitleBar": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.reactor.affectTitleBar.description%"
-        },
-        "neomono.reactor.affectPanelTitle": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.reactor.affectPanelTitle.description%"
-        },
-        "neomono.reactor.affectEditorDiagnostics": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.reactor.affectEditorDiagnostics.description%"
-        },
-        "neomono.reactor.affectEditorBackground": {
-          "type": "boolean",
-          "default": false,
-          "description": "%config.reactor.affectEditorBackground.description%"
-        },
-        "neomono.reactor.affectTabBorder": {
-          "type": "boolean",
-          "default": true,
-          "description": "%config.reactor.affectTabBorder.description%"
-        }
-      }
-    },
-    "walkthroughs": [
-      {
-        "id": "neomono.gettingStarted",
-        "title": "%walkthrough.title%",
-        "description": "%walkthrough.description%",
-        "steps": [
-          {
-            "id": "pickTheme",
-            "title": "%walkthrough.pickTheme.title%",
-            "description": "%walkthrough.pickTheme.description%",
-            "media": {
-              "image": "assets/neomono-icon.jpg",
-              "altText": "Neomono icon"
-            },
-            "completionEvents": [
-              "onSettingChanged:workbench.colorTheme"
-            ]
-          },
-          {
-            "id": "enableGlow",
-            "title": "%walkthrough.enableGlow.title%",
-            "description": "%walkthrough.enableGlow.description%",
-            "media": {
-              "image": "assets/neomono-icon.jpg",
-              "altText": "Neon Dreams glow"
-            },
-            "completionEvents": [
-              "onCommand:neomono.enableNeonDreams"
-            ]
-          },
-          {
-            "id": "enableReactor",
-            "title": "%walkthrough.enableReactor.title%",
-            "description": "%walkthrough.enableReactor.description%",
-            "media": {
-              "image": "assets/neomono-icon.jpg",
-              "altText": "Reactor Glow"
-            },
-            "completionEvents": [
-              "onSettingChanged:neomono.reactor.enabled",
-              "onCommand:neomono.enableReactorGlow"
-            ]
-          },
-          {
-            "id": "openLogs",
-            "title": "%walkthrough.openLogs.title%",
-            "description": "%walkthrough.openLogs.description%",
-            "media": {
-              "image": "assets/neomono-icon.jpg",
-              "altText": "Neomono output channel"
-            }
-          }
-        ]
-      }
     ]
   },
   "scripts": {
-    "clean": "node -e \"require('node:fs').rmSync('out',{recursive:true,force:true})\"",
-    "build": "node scripts/build.js",
-    "build:dev": "node scripts/build.js --dev",
-    "watch": "node scripts/build.js --watch",
-    "compile": "tsc && node scripts/copy-templates.js",
-    "typecheck": "tsc --noEmit",
-    "pretest": "pnpm run compile",
-    "test": "vscode-test",
-    "test:coverage": "c8 pnpm run test",
-    "coverage:check": "c8 --check-coverage --lines 50 --functions 50 --branches 40 --statements 50 pnpm run test",
     "validate:theme": "node scripts/validate-theme.js",
-    "validate:i18n": "node scripts/validate-i18n.js",
-    "validate:commands": "node scripts/validate-commands.js",
     "validate:tokencolors": "node scripts/snapshot-tokencolors.js",
     "snapshot:tokencolors:update": "node scripts/snapshot-tokencolors.js --update",
     "generate:deep": "node scripts/generate-deep-theme.js",
     "generate:hc": "node scripts/generate-hc-theme.js",
     "generate:themes": "node scripts/generate-deep-theme.js && node scripts/generate-hc-theme.js",
-    "validate": "pnpm run lint && pnpm run typecheck && pnpm run validate:theme && pnpm run validate:i18n && pnpm run validate:commands && pnpm run validate:tokencolors",
-    "lint": "eslint src scripts --max-warnings 0",
-    "badges:vscode": "node scripts/switch-badges.js vscode",
-    "badges:ovsx": "node scripts/switch-badges.js ovsx",
-    "badges:both": "node scripts/switch-badges.js both",
-    "vscode:prepublish": "pnpm run validate && pnpm run build",
+    "validate": "pnpm run validate:theme && pnpm run validate:tokencolors",
+    "vscode:prepublish": "pnpm run validate",
     "package": "vsce package",
     "publish:vscode": "vsce publish",
     "publish:ovsx": "ovsx publish"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^25.6.0",
-    "@types/vscode": "^1.85.0",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.2.1",
-    "c8": "^11.0.0",
-    "esbuild": "^0.28.0",
-    "eslint": "^10.3.0",
-    "mocha": "^11.7.5",
     "ovsx": "^0.10.12",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.2",
     "vscode-tmgrammar-test": "^0.1.3"
   },
-  "packageManager": "pnpm@9.15.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  }
+  "packageManager": "pnpm@9.15.0"
 }
