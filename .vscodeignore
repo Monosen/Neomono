@@ -1,5 +1,6 @@
 .atl/**
 .claude/**
+examples/**
 .vscode/**
 .github/**
 out/**

@@ -1,0 +1,134 @@
+{
+  "theme": {
+    "name": "Neomono",
+    "version": "0.0.2",
+    "author": "Monosen",
+    "description": "A vibrant, futuristic dark theme with neon accents for modern developers",
+    "repository": "https://github.com/Monosen/Neomono",
+    "license": "MIT"
+  },
+  "colors": {
+    "background": {
+      "primary": "#263238",
+      "secondary": "#1e272e",
+      "accent": "#2c3940"
+    },
+    "foreground": {
+      "primary": "#EEFFFF",
+      "secondary": "#B0BEC5",
+      "muted": "#546E7A"
+    },
+    "syntax": {
+      "keywords": "#C792EA",
+      "functions": "#82AAFF",
+      "strings": "#C3E88D",
+      "variables": "#EEFFFF",
+      "comments": "#546E7A",
+      "constants": "#F78C6C",
+      "operators": "#89DDFF",
+      "types": "#FFCB6B"
+    },
+    "ui": {
+      "selection": "#717CB425",
+      "lineHighlight": "#2c3940",
+      "cursor": "#FFCC00",
+      "border": "#2c3940"
+    }
+  },
+  "features": {
+    "neonDreams": {
+      "enabled": true,
+      "description": "Optional glow effects for enhanced visual experience",
+      "requirements": ["Custom CSS and JS Loader extension"]
+    },
+    "semanticHighlighting": true,
+    "italicComments": true,
+    "boldKeywords": false
+  },
+  "supportedLanguages": [
+    "javascript",
+    "typescript",
+    "python",
+    "go",
+    "rust",
+    "java",
+    "csharp",
+    "php",
+    "ruby",
+    "html",
+    "css",
+    "scss",
+    "json",
+    "yaml",
+    "markdown",
+    "sql",
+    "shell",
+    "bash",
+    "jsx",
+    "tsx"
+  ],
+  "configuration": {
+    "editor": {
+      "fontSize": 14,
+      "fontFamily": "'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace",
+      "fontLigatures": true,
+      "lineHeight": 1.6,
+      "cursorStyle": "line",
+      "cursorBlinking": "smooth"
+    },
+    "workbench": {
+      "colorTheme": "Neomono",
+      "iconTheme": "material-icon-theme"
+    }
+  },
+  "installation": {
+    "steps": [
+      "Open Visual Studio Code",
+      "Go to Extensions (Ctrl+Shift+X)",
+      "Search for 'Neomono'",
+      "Click Install",
+      "Select Neomono from Color Theme picker"
+    ],
+    "optional": {
+      "neonDreams": [
+        "Install 'Custom CSS and JS Loader' extension",
+        "Run command: 'Neomono: Enable Neon Dreams'",
+        "Run command: 'Reload Custom CSS and JS'",
+        "Restart VS Code"
+      ]
+    }
+  },
+  "testimonials": [
+    {
+      "author": "Alice Johnson",
+      "role": "Full-Stack Developer",
+      "comment": "The neon accents make coding feel like I'm in a cyberpunk movie!",
+      "rating": 5
+    },
+    {
+      "author": "Bob Smith",
+      "role": "UI/UX Designer",
+      "comment": "Perfect contrast and beautiful color scheme. My favorite theme!",
+      "rating": 5
+    },
+    {
+      "author": "Charlie Brown",
+      "role": "DevOps Engineer",
+      "comment": "Great for long coding sessions. Easy on the eyes.",
+      "rating": 4
+    }
+  ],
+  "stats": {
+    "downloads": 1000,
+    "rating": 4.8,
+    "stars": 150,
+    "lastUpdated": "2025-12-13"
+  },
+  "links": {
+    "homepage": "https://github.com/Monosen/Neomono",
+    "issues": "https://github.com/Monosen/Neomono/issues",
+    "marketplace": "https://marketplace.visualstudio.com/items?itemName=Monosen.neomono",
+    "changelog": "https://github.com/Monosen/Neomono/blob/main/CHANGELOG.md"
+  }
+}
+
